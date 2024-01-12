@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  laguagua-nginx:
+    image: nginx:1.20.1
+    container_name: laguagua-nginx
+    restart: unless-stopped
+    ports:
+      - 10002:80
+    links: 
+      - laguagua-app
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    networks:
+      - db_center_net
+    depends_on:
+      - laguagua-app
+
+  laguagua-app:
+    build:
+      context: ../
+      dockerfile: ./environment/app/php/Dockerfile
+      args:
+        user: laraveluser
+        uid: 1000
+    container_name: laguagua-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ../application/:/var/www
+      - ./app/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - db_center_net
+
+  # laguagua-mysql:
+  #   image: mysql:8.0
+  #   container_name: laguagua-mysql
+  #   restart: always
+  #   ports:
+  #     - 23406:3306
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: 123123
+  #   volumes:
+  #     - db-laguagua-volume:/var/lib/mysql
+  #   networks:
+  #     - db_center_net
+
+volumes:
+  db-laguagua-volume: ~ 
+networks:
+  db_center_net:
+    external: true
+    name: db_center_net
