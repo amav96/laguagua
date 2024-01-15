@@ -21,6 +21,11 @@ class AppErrors
     const ERROR_REGISTRO_CODE = "ERROR_REGISTER_CODE";
     const ERROR_REGISTRO_MESSAGE = "Error register";
 
+    const USUARIO_NO_TE_PERTENECE_CODE = "USUARIO_NO_TE_PERTENECE";
+    const USUARIO_NO_TE_PERTENECE_MESSAGE = "User dont belong to you";
+
+    
+
     // Empresa service
 
     const EMPRESA_CREATE_CODE = "EMPRESA_CREATE";
@@ -38,42 +43,47 @@ class AppErrors
     const EMPRESA_USER_NOT_EXISTS_CODE = "EMPRESA_USER_NOT_EXISTS";
     const EMPRESA_USER_NOT_EXISTS_MESSAGE = "User does not belong to company";
 
-    const SUCURSAL_NOT_BELONG_CODE = "SUCURSAL_NOT_BELONG";
-    const SUCURSAL_NOT_BELONG_MESSAGE = "Sucursal does not belong to user";
+    // recorridos
 
-    // contactos
+    const RECORRIDO_USUARIO_NO_TE_PERTENECE_CODE = "RECORRIDO_USUARIO_NO_TE_PERTENECE";
+    const RECORRIDO_USUARIO_NO_TE_PERTENECE_MESSAGE = "User does not belong to company";
 
-    const CONTACTO_CREATE_CODE = "CONTACTO_CREATE";
-    const CONTACTO_CREATE_MESSAGE = "Wrong data to create CONTACTO";
-
-    const CONTACTO_UPDATE_CODE = "CONTACTO_UPDATE";
-    const CONTACTO_UPDATE_MESSAGE = "Wrong data to update CONTACTO";
-
-    const CONTACTO_DELETE_CODE = "CONTACTO_DELETE";
-    const CONTACTO_DELETE_MESSAGE = "Wrong data to delete CONTACTO";
-
-    // comprobantes
-
-    const COMPROBANTE_CREATE_CODE = "COMPROBANTE_CREATE";
-    const COMPROBANTE_CREATE_MESSAGE = "Can't create document";
-
-    // categorias
-
-    const CATEGORIA_USER_NOT_EXISTS_CODE = "CATEGORIA_USER_NOT_EXISTS";
-    const CATEGORIA_USER_NOT_EXISTS_MESSAGE = "User does not belong to CATEGORIA";
-
-    const CATEGORIA_NOT_REMOVABLE_CODE = "CATEGORIA_NOT_REMOVABLE";
-    const CATEGORIA_NOT_REMOVABLE_MESSAGE = "CATEGORIA is not removable";
-
-    const CATEGORIA_CREATE_CODE = "CATEGORIA_CREATE";
-    const CATEGORIA_CREATE_MESSAGE = "Wrong data to create CATEGORIA";
-
-    const CATEGORIA_UPDATE_CODE = "CATEGORIA_UPDATE";
-    const CATEGORIA_UPDATE_MESSAGE = "Wrong data to UPDATE CATEGORIA";
-
-    const CATEGORIA_DELETE_CODE = "CATEGORIA_DELETE";
-    const CATEGORIA_DELETE_MESSAGE = "Wrong data to delete CATEGORIA";
+    const RECORRIDO_NO_EXISTE_CODE = "RECORRIDO_NO_EXISTE";
+    const RECORRIDO_NO_EXISTE_MESSAGE = "Recorrido no existe";
     
+
+    // parada
+
+    CONST PARADA_NO_PERTENCE_RECORRIDO_USUARIO_CODE = "PARADA NO PERTENCE RECORRIDO USUARIO";
+    CONST PARADA_NO_PERTENCE_RECORRIDO_USUARIO_MESSAGE = "Parada no pertenece a recorrido de usuario";
+
+    CONST PARADA_CREAR_ERROR_CODE = "PARADA CREAR ERROR";
+    CONST PARADA_CREAR_ERROR_MESSAGE = "No se creo la parada correctamente";
+
+    CONST PARADA_ACTUALIZAR_ERROR_CODE = "PARADA ACTUALIZAR ERROR";
+    CONST PARADA_ACTUALIZAR_ERROR_MESSAGE = "No se creo la parada correctamente";
+
+    const PARADA_NO_PERTECE_USUARIO_CODE = "PARADA_NO_PERTECE_USUARIO";
+    const PARADA_NO_PERTECE_USUARIO_MESSAGE = "La parada no pertenece al usuario";
+
+    // items
+
+    CONST ITEM_CREAR_ERROR_CODE = "ITEM CREAR ERROR";
+    CONST ITEM_CREAR_ERROR_MESSAGE = "No se creo el ITEM correctamente";
+
+    CONST ITEM_CREAR_DUPLICADO_ERROR_CODE = "ITEM CREAR DUPLICADO ERROR";
+    CONST ITEM_CREAR_DUPLICADO_ERROR_MESSAGE = "El item esta duplicado";
+
+    // clientes
+
+    CONST CLIENTE_CREAR_ERROR_CODE = "CLIENTE CREAR ERROR";
+    CONST CLIENTE_CREAR_ERROR_MESSAGE = "No se creo CLIENTE correctamente";
+
+    CONST CLIENTE_ACTUALIZAR_ERROR_CODE = "CLIENTE ACTUALIZAR ERROR";
+    CONST CLIENTE_ACTUALIZAR_ERROR_MESSAGE = "No se actualizo CLIENTE correctamente";
+
+    const CLIENTE_EXISTENTE_CODE = "CLIENTE EXISTENTE";
+    const CLIENTE_EXISTENTE_MESSAGE = "Un cliente ya existe con estos datos";
 
     // Logout
     const LOUGOUT_ERROR_CODE = "LOUGOUT_ERROR";

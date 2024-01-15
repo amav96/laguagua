@@ -27,7 +27,8 @@ class SaveRecorridoRequest extends FormRequest
 
                     
         return [
-            "empresa_id" => "required|integer"
+            "empresa_id"    => "required|integer",
+            "rider_id"    => "required|integer",
         ];
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Recorrido;
 
 use App\Exceptions\AppErrors;
 use App\Traits\RequestValidationHandler;
@@ -8,9 +8,8 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class AuthLoginRequest extends FormRequest
+class SaveOrigenRequest extends FormRequest
 {
-
     use RequestValidationHandler;
     /**
      * Determine if the user is authorized to make this request.
@@ -28,10 +27,10 @@ class AuthLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:6'
+            "origen_lat"        => "required|string",
+            "origen_lng"        => "required|string",
+            "origen_formateado" => "required|string",
         ];
     }
-
 
 }

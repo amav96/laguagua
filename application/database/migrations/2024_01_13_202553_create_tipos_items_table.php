@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\ProveedorItem;
+use App\Models\TipoItem;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,22 +12,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('proveedores_items', function (Blueprint $table) {
+        Schema::create('tipos_items', function (Blueprint $table) {
             $table->id();
-            
+
             $table->string("nombre");
 
-            $table->integer("escanear")->default(0);
-
-            $table->timestamps();
+            $table->string("codigo");
         });
 
-        ProveedorItem::insert([
+        TipoItem::insert([
             [
-                "nombre" => "MERCADO LIBRE"
+                "nombre"    => "Entregado",
+                "codigo"    => "entregado"
             ],
             [
-                "nombre" => "INDEPENDIENTE"
+                "nombre"    => "Retiro",
+                "codigo"    => "retiro"
             ],
         ]);
     }
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('proveedores_items');
+        Schema::dropIfExists('tipos_items');
     }
 };

@@ -11,4 +11,6 @@ class AppSuccess
     // PASSWORD
     const CORREO_RECUPERAR_CONTRASENA_ENVIADO_MESSAGE = 'En los proximos 3 minutos te llegara un mensaje para recuperar tu contraseña';
     const PASSWORD_ACTUALIZADA_MESSAGE = 'Contraseña actualizada correctamente';
+
+
 }

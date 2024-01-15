@@ -5,22 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EstadoParada extends Model
+class TipoItem extends Model
 {
     use HasFactory;
 
-    CONST PREPARADO = 1;
-    CONST EN_CAMINO = 2;
-    CONST VISITADO  = 3;
-    CONST CANCELADO = 4;
-
     public $timestamps = false;
-
+    
      /**
      * Table name.
      * @var string.
      */
-    protected $table = 'estados_paradas';
+    protected $table = 'tipos_items';
 
     /**
      * Table primary key.
@@ -33,6 +28,7 @@ class EstadoParada extends Model
      * @var bool.
      */
     public $incrementing = true;
+
 
     /**
      * @var array.

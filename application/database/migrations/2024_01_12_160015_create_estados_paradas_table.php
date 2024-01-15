@@ -17,24 +17,27 @@ return new class extends Migration
 
             $table->string("nombre");
 
+            $table->string("codigo");
+
         });
 
         EstadoParada::insert([
             [
-                "nombre" => "ENTREGADO",
+                "nombre" => "Preparado",
+                "codigo" => "preparado",
             ],
             [
-                "nombre" => "RETIRADO",
+                "nombre" => "En camino",
+                "codigo" => "en-camino",
             ],
             [
-                "nombre" => "CANCELADO",
+                "nombre" => "Visitado",
+                "codigo" => "visitado",
             ],
             [
-                "nombre" => "PREPARADO",
-            ],
-            [
-                "nombre" => "EN_CAMINO",
-            ],
+                "nombre" => "Cancelado",
+                "codigo" => "cancelado",
+            ]
         ]);
     }
 

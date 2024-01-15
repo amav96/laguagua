@@ -10,9 +10,9 @@ class EstadoRecorrido extends Model
     use HasFactory;
 
     const PREPARADO = 1;
-    const INICIADO = 1;
-    const FINALIZADO = 1;
-    const CANCELADO = 1;
+    const INICIADO = 2;
+    const FINALIZADO = 3;
+    const CANCELADO = 4;
 
     public $timestamps = false;
 

@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ParadaController;
 use App\Http\Controllers\RecorridoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,11 +28,35 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post("auth/registrar", [AuthController::class, 'registrar']);
 Route::post("auth/login", [AuthController::class, 'login']);
 
-// Recorridos
+
 Route::middleware(['auth:api'])->group(function () {
+
+    // Recorridos
     Route::prefix('recorridos')->group(function () {
         Route::post('', [RecorridoController::class, 'create']);
+        Route::patch('origen/{recorrido}', [RecorridoController::class, 'updateOrigen']);
+        Route::patch('destino/{recorrido}', [RecorridoController::class, 'destino']);
     });
+
+    // Paradas
+    Route::prefix('paradas')->group(function () {
+        Route::post('', [ParadaController::class, 'create']);
+        Route::put('/{parada}', [ParadaController::class, 'update']);
+        Route::delete('/{parada}', [ParadaController::class, 'delete']);
+    });
+
+    // Items
+    Route::prefix('items')->group(function () {
+        Route::post('', [ItemController::class, 'create']);
+    });
+
+    // Clientes
+    Route::prefix('clientes')->group(function () {
+        Route::get('/{cliente?}', [ClienteController::class, 'findAll']);
+        Route::post('', [ClienteController::class, 'create']);
+        Route::put('/{cliente}', [ClienteController::class, 'update']);
+    });
+
 });
 
 

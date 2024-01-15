@@ -3,12 +3,15 @@
 namespace App\Http\Requests\Auth;
 
 use App\Exceptions\AppErrors;
+use App\Traits\RequestValidationHandler;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class AuthRegisterRequest extends FormRequest
 {
+    use RequestValidationHandler;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -29,14 +32,5 @@ class AuthRegisterRequest extends FormRequest
             'email' => 'required|email|unique:usuarios',
             'password' => 'required|min:6|string',
         ];
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        $messages = [
-            "code" => AppErrors::WRONG_INPUT_DATA_CODE,
-            "messages" => $validator->errors()->get('*')
-        ];
-        throw new HttpResponseException(response($messages, 400));
     }
 }

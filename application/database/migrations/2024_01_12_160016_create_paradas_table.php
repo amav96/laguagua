@@ -23,6 +23,8 @@ return new class extends Migration
 
             $table->string("direccion_formateada");
 
+            $table->string("codigo_postal");
+
             $table->string("localidad");
 
             $table->string("provincia");
@@ -30,11 +32,12 @@ return new class extends Migration
             $table->unsignedBigInteger('estado_parada_id')->nullable();
             $table->foreign('estado_parada_id')->references('id')->on('estados_paradas');
 
-            $table->unsignedBigInteger('tipo_parada_id')->nullable();
-            $table->foreign('tipo_parada_id')->references('id')->on('tipos_paradas');
+            $table->dateTime("realizado_en")->nullable();
 
-            $table->unsignedBigInteger('proveedor_item_id')->nullable();
-            $table->foreign('proveedor_item_id')->references('id')->on('proveedores_items');
+            $table->unsignedBigInteger('rider_id')->nullable();
+            $table->foreign('rider_id')->references('id')->on('usuarios');
+
+            $table->softDeletes();
 
             $table->timestamps();
         });

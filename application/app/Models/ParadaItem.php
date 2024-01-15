@@ -5,22 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EstadoParada extends Model
+class ParadaItem extends Model
 {
     use HasFactory;
 
-    CONST PREPARADO = 1;
-    CONST EN_CAMINO = 2;
-    CONST VISITADO  = 3;
-    CONST CANCELADO = 4;
-
     public $timestamps = false;
-
+    
      /**
      * Table name.
      * @var string.
      */
-    protected $table = 'estados_paradas';
+    protected $table = 'paradas_items';
 
     /**
      * Table primary key.
