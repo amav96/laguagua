@@ -11,9 +11,10 @@ class EstadoItem extends Model
 
     const EN_ESPERA  = 1;
     const PREPARADO  = 2;
-    const ENTREGADO  = 3;
-    const RETIRADO   = 4;
-    const CANCELADO  = 5;
+    const EN_CAMINO  = 3;
+    const ENTREGADO  = 4;
+    const RETIRADO   = 5;
+    const CANCELADO  = 6;
 
     public $timestamps = false;
 

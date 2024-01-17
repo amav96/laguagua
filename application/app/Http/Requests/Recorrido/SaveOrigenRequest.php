@@ -26,9 +26,10 @@ class SaveOrigenRequest extends FormRequest
      */
     public function rules(): array
     {
+       
         return [
-            "origen_lat"        => "required|string",
-            "origen_lng"        => "required|string",
+            "origen_lat"        => "required|numeric",
+            "origen_lng"        => "required|numeric",
             "origen_formateado" => "required|string",
         ];
     }

@@ -18,16 +18,23 @@ return new class extends Migration
             $table->unsignedBigInteger('rider_id');
             $table->foreign('rider_id')->references('id')->on('usuarios');
 
+            $table->unsignedBigInteger('creador_por');
+            $table->foreign('creador_por')->references('id')->on('usuarios');
+
             $table->unsignedBigInteger('estado_recorrido_id');
             $table->foreign('estado_recorrido_id')->references('id')->on('estados_recorridos');
 
-            $table->string("origen_lat")->nullable();
+            $table->timestamp("inicio");
+            
+            $table->timestamp("finalizado")->nullable();
 
-            $table->string("origen_lng")->nullable();
+            $table->double("origen_lat")->nullable();
 
-            $table->string("destino_lat")->nullable();
+            $table->double("origen_lng")->nullable();
 
-            $table->string("destino_lng")->nullable();
+            $table->double("destino_lat")->nullable();
+
+            $table->double("destino_lng")->nullable();
             
             $table->string("origen_formateado")->nullable();
 
@@ -35,7 +42,7 @@ return new class extends Migration
 
             $table->integer("optimizado")->default(0);
 
-            $table->unsignedBigInteger('empresa_id');
+            $table->unsignedBigInteger('empresa_id')->nullable();
             $table->foreign('empresa_id')->references('id')->on('empresas');
 
             $table->timestamps();

@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
+use App\Http\Requests\Recorrido\GetRecorridoRequest;
 use App\Http\Requests\Recorrido\SaveDestinoRequest;
 use App\Http\Requests\Recorrido\SaveOrigenRequest;
 use App\Http\Requests\Recorrido\SaveRecorridoRequest;
+use App\Http\Requests\Recorrido\UpdateEstadoRecorridoRequest;
 use App\Http\Services\Empresa\EmpresaService;
 use App\Http\Services\Recorrido\RecorridoService;
 use App\Models\Recorrido;
+use Illuminate\Http\Request;
 
 class RecorridoController extends Controller
 {
@@ -18,6 +21,35 @@ class RecorridoController extends Controller
         public RecorridoService $recorridoService,
         public EmpresaService $empresaService
     ){}
+
+    public function findAll(GetRecorridoRequest $request, int $recorrido_id = null){
+
+        try {
+
+            $filtros = $request->all();
+            $relaciones = [];
+            if(isset($filtros["relaciones"])){
+                $relaciones = explode(",", $filtros["relaciones"]);
+                unset($filtros["relaciones"]);
+            }
+            
+            
+            $filtros["recorrido_id"] = $recorrido_id ?? $request->input("recorrido_id");
+            $usuario = $request->user();
+
+            $recorridos = $this->recorridoService->findAll(
+                filtros: $filtros, 
+                relaciones: $relaciones, 
+                permisos: [],
+                usuarioAutenticadoId: $usuario->id , 
+            );
+            
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(), 404);
+        }
+ 
+        return response()->json($recorridos);
+    }
 
     public function create(SaveRecorridoRequest $request){
 
@@ -31,11 +63,17 @@ class RecorridoController extends Controller
                 throw new BussinessException(AppErrors::USUARIO_NO_TE_PERTENECE_MESSAGE, AppErrors::USUARIO_NO_TE_PERTENECE_CODE);
             }
         
-            if(!$this->empresaService->usuarioPerteneceEmpresa($usuarioId, $request->input("empresa_id"))){
-                throw new BussinessException(AppErrors::EMPRESA_USER_NOT_EXISTS_MESSAGE, AppErrors::EMPRESA_USER_NOT_EXISTS_CODE);
-            }
+            // if(!$this->empresaService->usuarioPerteneceEmpresa($usuarioId, $request->input("empresa_id"))){
+            //     throw new BussinessException(AppErrors::EMPRESA_USER_NOT_EXISTS_MESSAGE, AppErrors::EMPRESA_USER_NOT_EXISTS_CODE);
+            // }
 
-            $recorrido = $this->recorridoService->create($request->user(), $request->input("empresa_id"));
+            $data = [
+                "rider_id"      => $usuarioAutenticado->id,
+                // "empresa_id"    => $request->input("empresa_id"),
+                "inicio"        => $request->input("inicio"),
+            ];
+
+            $recorrido = $this->recorridoService->create($data, $usuarioAutenticado->id);
 
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(), $e->getInternalCode() === AppErrors::EMPRESA_USER_NOT_EXISTS_CODE ? 404 : 400);
@@ -55,6 +93,48 @@ class RecorridoController extends Controller
             }
 
             $origen = $this->recorridoService->updateOrigen($request->all(), $recorrido->id);
+
+
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(), $e->getInternalCode() === AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_CODE ? 404 : 400);
+        }
+
+        return response()->json(["recorrido" => $origen->only(["id", "origen_lat", "origen_lng", "origen_formateado"])]);
+
+    }
+
+    public function removeOrigen(Recorrido $recorrido, Request $request){
+      
+        $usuario = $request->user();
+
+        try {
+            
+            if(!$this->recorridoService->perteneceUsuario($usuario->id, $recorrido->id)){
+                throw new BussinessException(AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_MESSAGE, AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_CODE);
+            }
+
+            $origen = $this->recorridoService->removeOrigen($recorrido->id);
+
+
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(), $e->getInternalCode() === AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_CODE ? 404 : 400);
+        }
+
+        return response()->json(["recorrido" => $origen->only(["id", "origen_lat", "origen_lng", "origen_formateado"])]);
+
+    }
+
+    public function removeDestino(Recorrido $recorrido, Request $request){
+
+        $usuario = $request->user();
+
+        try {
+            
+            if(!$this->recorridoService->perteneceUsuario($usuario->id, $recorrido->id)){
+                throw new BussinessException(AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_MESSAGE, AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_CODE);
+            }
+
+            $origen = $this->recorridoService->removeDestino($recorrido->id);
 
 
         } catch (BussinessException $e) {
@@ -86,7 +166,23 @@ class RecorridoController extends Controller
 
     }
 
+    public function updateEstado(Recorrido $recorrido, UpdateEstadoRecorridoRequest $request){
 
+       try {
+            $usuario = $request->user();
+
+            if(!$this->recorridoService->perteneceUsuario($usuario->id, $recorrido->id)){
+                throw new BussinessException(AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_MESSAGE, AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_CODE);
+            }
+
+            $recorridoEstado = $this->recorridoService->updateEstado($recorrido, $request->all());
+        
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(), $e->getInternalCode() === AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_CODE ? 404 : 400);
+        }
+
+        return $recorridoEstado;
+    }
 
     public function armarRecorrido(SaveRecorridoRequest $request){
        

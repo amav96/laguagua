@@ -3,12 +3,14 @@
 namespace App\Http\Requests\Recorrido;
 
 use App\Exceptions\AppErrors;
+use App\Traits\RequestValidationHandler;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class SaveRecorridoRequest extends FormRequest
 {
+    use RequestValidationHandler;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -27,19 +29,10 @@ class SaveRecorridoRequest extends FormRequest
 
                     
         return [
-            "empresa_id"    => "required|integer",
-            "rider_id"    => "required|integer",
+            // "empresa_id"    => "required|integer",
+            "rider_id"      => "required|integer",
+            "inicio"        => "required|date"  
         ];
     }
-
-    protected function failedValidation(Validator $validator)
-    {
-        $messages = [
-            "code" => AppErrors::WRONG_INPUT_DATA_CODE,
-            "messages" => $validator->errors()->get('*')
-        ];
-        throw new HttpResponseException(response($messages, 400));
-    }
-
 
 }

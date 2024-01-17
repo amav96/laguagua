@@ -6,10 +6,34 @@ use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Models\EstadoParada;
 use App\Models\Parada;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 class ParadaService {
 
-  public function create(array $request) : Parada {
+    public function findAll(array $filtros, int $userId,  array $permisos = []) {
+
+        $query = Parada::query();
+        
+        $query = $query
+                ->when(isset($filtros["parada_id"]), function (Builder $q) use($filtros) : void {
+                    $q->where('id', $filtros["parada_id"]); 
+                })
+                ->when(count($permisos) === 0, function (Builder $q) use($filtros, $userId) : void {
+                    $q->where('rider_id', $userId); 
+                });
+
+        if(isset($filtros["page"])){
+            $query = $query->paginate();
+        } else {
+            $query = $query->get();
+        }
+
+        return $query;
+
+    }
+
+    public function create(array $request) : Parada {
 
         beginTransaction();
          try {
@@ -38,9 +62,9 @@ class ParadaService {
         commit();
         return $parada;
 
-  }
+    }
 
-  public function update(array $request, Parada $parada) : Parada {
+    public function update(array $request, Parada $parada) : Parada {
 
         beginTransaction();
         try {
@@ -66,6 +90,7 @@ class ParadaService {
         return $parada;
 
     }
+    
 
     public function perteneceUsuario(int $riderId, int $paradaId){
         return Parada::where('rider_id', $riderId)->where('id', $paradaId)->exists();

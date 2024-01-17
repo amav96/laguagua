@@ -28,8 +28,8 @@ class SaveDestinoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "destino_lat"        => "required|string",
-            "destino_lng"        => "required|string",
+            "destino_lat"        => "required|numeric",
+            "destino_lng"        => "required|numeric",
             "destino_formateado" => "required|string",
         ];
     }

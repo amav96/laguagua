@@ -17,9 +17,9 @@ return new class extends Migration
             $table->unsignedBigInteger('recorrido_id')->nullable();
             $table->foreign('recorrido_id')->references('id')->on('recorridos');
 
-            $table->string("lat");
+            $table->double("lat");
 
-            $table->string("lng");
+            $table->double("lng");
 
             $table->string("direccion_formateada");
 

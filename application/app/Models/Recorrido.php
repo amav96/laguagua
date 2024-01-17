@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Recorrido extends Model
 {
@@ -31,5 +33,13 @@ class Recorrido extends Model
      * @var array.
      */
     protected $guarded = [];
+
+    public function estadoRecorrido() : HasOne {
+        return $this->hasOne(EstadoRecorrido::class, 'id', 'estado_recorrido_id');
+    }
+
+    public function paradas() : HasMany {
+        return $this->hasMany(Parada::class, 'recorrido_id', 'id');
+    }
 
 }

@@ -14,10 +14,13 @@ return new class extends Migration
         Schema::create('comprobantes_items', function (Blueprint $table) {
             $table->id();
 
-            $table->string("path");
+            $table->string("path")->nullable();
 
-            $table->unsignedBigInteger('item_id')->nullable();
+            $table->unsignedBigInteger('item_id');
             $table->foreign('item_id')->references('id')->on('items');
+
+            $table->unsignedBigInteger('usuario_id');
+            $table->foreign('usuario_id')->references('id')->on('usuarios');
 
             $table->timestamps();
         });
@@ -31,6 +34,10 @@ return new class extends Migration
 
         Schema::table('items', function (Blueprint $table) {
             $table->dropForeign(['item_id']);
+        });
+
+        Schema::table('usuarios', function (Blueprint $table) {
+            $table->dropForeign(['usuario_id']);
         });
 
         Schema::dropIfExists('comprobantes_items');

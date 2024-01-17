@@ -7,7 +7,8 @@ use App\Exceptions\BussinessException;
 use App\Http\Requests\Item\SaveItemRequest;
 use App\Http\Services\Item\ItemService;
 use App\Http\Services\Parada\ParadaService;
-use Illuminate\Http\Request;
+use App\Models\Item;
+
 
 class ItemController extends Controller
 {
@@ -20,28 +21,55 @@ class ItemController extends Controller
 
         $this->validarParada();
 
-        $itemsCreados = [];
-
         try {
-            $data = $request->all();
-            $items =  $data["items"];
-           
-            if($items && count($items) > 0){
-                foreach($items as $item){
 
-                    $item["parada_id"] = $data["parada_id"];
+            $usuario = $request->user();
 
-                    $crearItem = $this->itemService->create($item, $data["parada_id"]);
-                    if($crearItem){
-                        $itemsCreados[] = $crearItem;
-                    }
-                }
-            }  
+            $item = $this->itemService->create($request->all(), $usuario->id);
+                
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(),  400);
         }   
         
-        return response()->json($itemsCreados);
+        return response()->json($item);
+    }
+
+    public function update(Item $item, SaveItemRequest $request){
+
+        $this->validarParada();
+
+        try {
+
+            $usuario = $request->user();
+
+            $this->validarCreadorItem($usuario->id, $item);
+    
+            $actualizarItem = $this->itemService->update($item, $request->all());
+
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(),  400);
+        }   
+
+
+        return response()->json($actualizarItem);
+        
+    }
+
+    public function updateEstado(Item $item, SaveItemRequest $request){
+
+        try {
+
+            $usuario = $request->user();
+
+            $this->validarCreadorItem($usuario->id, $item);
+
+            $actualizarItem = $this->itemService->updateEstado($item, $request->all());
+
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(),  400);
+        }  
+
+        return response()->json($actualizarItem);
     }
 
     private function validarParada(){
@@ -49,4 +77,11 @@ class ItemController extends Controller
             throw new BussinessException(AppErrors::PARADA_NO_PERTECE_USUARIO_MESSAGE, AppErrors::PARADA_NO_PERTECE_USUARIO_CODE);
         }
     }
+
+    private function validarCreadorItem(int $usuarioId, Item $item){
+        if($usuarioId !== $item->creado_por){
+            throw new BussinessException(AppErrors::ITEM_NO_PERTECE_USUARIO_MESSAGE, AppErrors::ITEM_NO_PERTECE_USUARIO_CODE);
+        }
+    }
+
 }

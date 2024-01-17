@@ -24,18 +24,40 @@ class SaveItemRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
-            "items"                     => "required|array",
-            "items.*.tipo_item_id"      => "required|integer|exists:tipos_items,id",
-            "items.*.proveedor_item_id" => "required|integer|exists:proveedores_items,id",
-            "items.*.destinatario"      => "nullable|string|max:255",
-            "items.*.estado_item_id"    => "nullable|integer|exists:estados_items,id",
-            "items.*.track_id"          => "nullable|string|max:255",
-            "items.*.cliente_id"        => "nullable|integer|exists:clientes,id",
-            "parada_id"                 => "nullable|integer|exists:paradas,id",
-            "rider_id"                  => "nullable|integer|exists:usuarios,id",
-        ];
 
+        if ($this->isMethod("PATCH")) {
+            $rules = [
+                "estado_item_id"    => "required|integer|exists:estados_items,id",
+                "parada_id"         => "nullable|integer|exists:paradas,id",
+            ];
+            return $rules;
+        }
+
+        $rules = [
+            "empresa_id"        => "required|integer|exists:empresas,id",
+            "parada_id"         => "nullable|integer|exists:paradas,id",
+            "rider_id"          => "nullable|integer|exists:usuarios,id",
+            "tipo_item_id"      => "required|integer|exists:tipos_items,id",
+            "proveedor_item_id" => "required|integer|exists:proveedores_items,id",
+            "destinatario"      => "nullable|string|max:255",
+            "track_id"          => "nullable|string|max:255",
+        ];
+    
+        if ($this->isMethod("POST")) {
+            $rules += [
+                "estado_item_id"    => "nullable|integer|exists:estados_items,id",
+                "cliente_id"        => "nullable|integer|exists:clientes,id",
+            ];
+        }
+    
+        if ($this->isMethod("PUT")) {
+            $rules += [
+                "estado_item_id"    => "required|integer|exists:estados_items,id",
+            ];
+        }
+
+        
+    
         return $rules;
     }
 }

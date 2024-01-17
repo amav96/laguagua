@@ -30,6 +30,12 @@ return new class extends Migration
 
             $table->string('destinatario')->nullable();
 
+            $table->unsignedBigInteger('empresa_id');
+            $table->foreign('empresa_id')->references('id')->on('empresas');
+
+            $table->unsignedBigInteger('creado_por');
+            $table->foreign('creado_por')->references('id')->on('usuarios');
+
             $table->timestamps();
         });
     }
@@ -45,6 +51,8 @@ return new class extends Migration
             $table->dropForeign(['tipo_item_id']);
             $table->dropForeign(['proveedor_item_id']);
             $table->dropForeign(['estado_item_id']);
+            $table->dropForeign(['empresa_id']);
+            $table->dropForeign(['creado_por']);
         });
 
         Schema::dropIfExists('items');

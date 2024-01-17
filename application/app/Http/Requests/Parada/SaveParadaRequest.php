@@ -47,11 +47,11 @@ class SaveParadaRequest extends FormRequest
         $rules = [
             "lat" => [
                 "required",
-                "string"
+                "numeric"
             ],
             "lng" => [
                 "required",
-                "string"
+                "numeric"
             ],
             "direccion_formateada" => [
                 "required",

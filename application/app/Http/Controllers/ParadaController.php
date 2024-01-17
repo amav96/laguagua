@@ -17,6 +17,34 @@ class ParadaController extends Controller
         public ParadaService $paradaService
     ){}
 
+    public function findAll(Request $request, int $parada_id = null){
+
+        try {
+
+            $filtros = $request->all();
+            $filtros["parada_id"] = $parada_id ?? $request->input("parada_id");
+    
+            $usuario = $request->user();
+
+            if(!isset($request["parada_id"])){
+                // TODO: solo permitir a admin o autorizados para traer todas las paradas
+                return response()->json([]);
+            }
+    
+            if(isset($request["parada_id"])){
+                $this->validarParadaPerteneceUsuario($usuario->id, $filtros["parada_id"]);
+
+            } 
+
+            $paradas = $this->paradaService->findAll($filtros, userId: $usuario->id , permisos: []);
+            
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(), 404);
+        }
+ 
+        return response()->json($paradas);
+    }
+
     public function create(SaveParadaRequest $request){
 
         try {
@@ -37,10 +65,7 @@ class ParadaController extends Controller
         try {
 
             $riderId = $request->rider_id;
-
-            if(!$this->paradaService->perteneceUsuario($riderId, $parada->id)){
-                throw new BussinessException(AppErrors::PARADA_NO_PERTECE_USUARIO_MESSAGE, AppErrors::PARADA_NO_PERTECE_USUARIO_CODE);
-            }
+            $this->validarParadaPerteneceUsuario($riderId, $parada->id);
 
             $actualizarParada = $this->paradaService->update($request->validated(), $parada);
 
@@ -55,14 +80,11 @@ class ParadaController extends Controller
 
     public function delete(Parada $parada, Request $request){
 
-        $riderId = $request->user()->id;
-
         try {
 
-            if(!$this->paradaService->perteneceUsuario($riderId, $parada->id)){
-                throw new BussinessException(AppErrors::PARADA_NO_PERTECE_USUARIO_MESSAGE, AppErrors::PARADA_NO_PERTECE_USUARIO_CODE);
-            }
-    
+            $riderId = $request->user()->id;
+            $this->validarParadaPerteneceUsuario($riderId, $parada->id);
+
             $parada->delete();
 
         } catch (BussinessException $e) {
@@ -73,4 +95,11 @@ class ParadaController extends Controller
             "id" => $parada->id
         ]);
     }
+
+    private function validarParadaPerteneceUsuario(int $riderId, int $parada_id){
+        if(!$this->paradaService->perteneceUsuario($riderId, $parada_id)){
+            throw new BussinessException(AppErrors::PARADA_NO_PERTECE_USUARIO_MESSAGE, AppErrors::PARADA_NO_PERTECE_USUARIO_CODE);
+        }
+    }
+    
 }

@@ -16,12 +16,12 @@ class ClienteController extends Controller
     )
     {}
 
-    public function findAll(Request $request, int $cliente = null){
+    public function findAll(Request $request, int $cliente_id = null){
 
         try {
 
             $filtros = $request->all();
-            $filtros["cliente_id"] = $cliente ?? $request->input("cliente");
+            $filtros["cliente_id"] = $cliente_id ?? $request->input("cliente_id");
 
             $clientes = $this->clienteService->findAll($filtros);
 
