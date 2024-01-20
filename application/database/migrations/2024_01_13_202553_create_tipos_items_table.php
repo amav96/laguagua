@@ -22,8 +22,8 @@ return new class extends Migration
 
         TipoItem::insert([
             [
-                "nombre"    => "Entregado",
-                "codigo"    => "entregado"
+                "nombre"    => "Entrega",
+                "codigo"    => "entrega"
             ],
             [
                 "nombre"    => "Retiro",

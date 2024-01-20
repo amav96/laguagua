@@ -20,10 +20,10 @@ class ParadaController extends Controller
     public function findAll(Request $request, int $parada_id = null){
 
         try {
-
-            $filtros = $request->all();
-            $filtros["parada_id"] = $parada_id ?? $request->input("parada_id");
-    
+       
+            $parametros = $request->all();
+            $parametros["parada_id"] = $parada_id ?? $request->input("parada_id");
+            
             $usuario = $request->user();
 
             if(!isset($request["parada_id"])){
@@ -32,11 +32,11 @@ class ParadaController extends Controller
             }
     
             if(isset($request["parada_id"])){
-                $this->validarParadaPerteneceUsuario($usuario->id, $filtros["parada_id"]);
+                $this->validarParadaPerteneceUsuario($usuario->id, $parametros["parada_id"]);
 
             } 
 
-            $paradas = $this->paradaService->findAll($filtros, userId: $usuario->id , permisos: []);
+            $paradas = $this->paradaService->findAll($parametros, userId: $usuario->id , permisos: []);
             
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(), 404);

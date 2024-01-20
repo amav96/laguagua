@@ -57,9 +57,6 @@ return new class extends Migration
             $table->dropForeign(['estado_parada_id']);
         });
 
-        Schema::table('tipos_paradas', function (Blueprint $table) {
-            $table->dropForeign(['tipo_parada_id']);
-        });
 
         Schema::table('proveedores_items', function (Blueprint $table) {
             $table->dropForeign(['proveedor_item_id']);

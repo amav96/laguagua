@@ -11,19 +11,21 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ParadaService {
 
-    public function findAll(array $filtros, int $userId,  array $permisos = []) {
+    public function findAll(array $parametros, int $userId,  array $permisos = []) {
 
         $query = Parada::query();
-        
         $query = $query
-                ->when(isset($filtros["parada_id"]), function (Builder $q) use($filtros) : void {
-                    $q->where('id', $filtros["parada_id"]); 
+                ->when(isset($parametros["incluye"]), function (Builder $q) use($parametros) : void {
+                    $q->with(explode(",", $parametros["incluye"]));
                 })
-                ->when(count($permisos) === 0, function (Builder $q) use($filtros, $userId) : void {
+                ->when(isset($parametros["parada_id"]), function (Builder $q) use($parametros) : void {
+                    $q->where('id', $parametros["parada_id"]); 
+                })
+                ->when(count($permisos) === 0, function (Builder $q) use($parametros, $userId) : void {
                     $q->where('rider_id', $userId); 
                 });
 
-        if(isset($filtros["page"])){
+        if(isset($parametros["page"])){
             $query = $query->paginate();
         } else {
             $query = $query->get();

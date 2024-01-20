@@ -26,20 +26,13 @@ class RecorridoController extends Controller
 
         try {
 
-            $filtros = $request->all();
-            $relaciones = [];
-            if(isset($filtros["relaciones"])){
-                $relaciones = explode(",", $filtros["relaciones"]);
-                unset($filtros["relaciones"]);
-            }
-            
-            
-            $filtros["recorrido_id"] = $recorrido_id ?? $request->input("recorrido_id");
+            $parametros = $request->all();
+    
+            $parametros["recorrido_id"] = $recorrido_id ?? $request->input("recorrido_id");
             $usuario = $request->user();
 
             $recorridos = $this->recorridoService->findAll(
-                filtros: $filtros, 
-                relaciones: $relaciones, 
+                parametros: $parametros, 
                 permisos: [],
                 usuarioAutenticadoId: $usuario->id , 
             );

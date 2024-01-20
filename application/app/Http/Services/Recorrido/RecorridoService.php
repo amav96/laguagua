@@ -13,27 +13,29 @@ use Illuminate\Database\Eloquent\Builder;
 
 class RecorridoService {
 
-    public function findAll(array $filtros, array $relaciones = [], array $permisos = [], int $usuarioAutenticadoId) {
+    public function findAll(array $parametros, array $permisos = [], int $usuarioAutenticadoId) {
 
         $query = Recorrido::query();
      
         $query = $query
-                ->with($relaciones)
-                ->when(isset($filtros["recorrido_id"]), function (Builder $q) use($filtros) : void {
-                    $q->where('id', $filtros["recorrido_id"]); 
+                ->when(isset($parametros["incluye"]), function (Builder $q) use($parametros) : void {
+                    $q->with(explode(",", $parametros["incluye"]));
                 })
-                ->when(isset($filtros["inicio"]), function (Builder $q) use($filtros) : void {
-                    $q->whereDate('inicio', '>=', $filtros["inicio"] . ' 00:00:00')
-                      ->where('inicio', '<=', $filtros["inicio"] . ' 23:59:59');
+                ->when(isset($parametros["recorrido_id"]), function (Builder $q) use($parametros) : void {
+                    $q->where('id', $parametros["recorrido_id"]); 
                 })
-                ->when(isset($filtros["rider_id"]), function (Builder $q) use($filtros) : void {
-                    $q->where('rider_id', $filtros["rider_id"]); 
+                ->when(isset($parametros["inicio"]), function (Builder $q) use($parametros) : void {
+                    $q->whereDate('inicio', '>=', $parametros["inicio"] . ' 00:00:00')
+                      ->where('inicio', '<=', $parametros["inicio"] . ' 23:59:59');
                 })
-                ->when(count($permisos) === 0, function (Builder $q) use($filtros, $usuarioAutenticadoId) : void {
+                ->when(isset($parametros["rider_id"]), function (Builder $q) use($parametros) : void {
+                    $q->where('rider_id', $parametros["rider_id"]); 
+                })
+                ->when(count($permisos) === 0, function (Builder $q) use($parametros, $usuarioAutenticadoId) : void {
                     $q->where('rider_id', $usuarioAutenticadoId); 
                 });
 
-        if(isset($filtros["page"])){
+        if(isset($parametros["page"])){
             $query = $query->paginate();
         } else {
             $query = $query->get();

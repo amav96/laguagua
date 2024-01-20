@@ -37,7 +37,7 @@ class ItemService {
                 "track_id"              => $request["track_id"] ?? null,
                 "cliente_id"            => $request["cliente_id"] ?? null,
                 "destinatario"          => $request["destinatario"] ?? null,
-                "creador_por"           => $creadoPor
+                "creado_por"           => $creadoPor
             ]);
 
             if(isset($request["parada_id"])){

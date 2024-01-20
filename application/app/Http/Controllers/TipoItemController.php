@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TipoParada;
+use App\Models\TipoItem;
 use Illuminate\Http\Request;
 
 class TipoItemController extends Controller
 {
     public function findAll(){
-        return response()->json(TipoParada::get());
+        return response()->json(TipoItem::get());
     }
 }

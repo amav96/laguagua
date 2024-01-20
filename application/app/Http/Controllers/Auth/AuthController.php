@@ -19,7 +19,8 @@ class AuthController extends Controller
     {}
 
     public function autenticado(Request $request){
-        return response()->json(["autenticado" => $request->user()]);
+        $usuario = $request->user()->load("empresas");
+        return response()->json(["autenticado" => $usuario]);
     }
 
     public function login (AuthLoginRequest $request) {

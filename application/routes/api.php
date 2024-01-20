@@ -4,11 +4,13 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CodigoAreaController;
 use App\Http\Controllers\ComprobanteItemController;
+use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\EstadoItemController;
 use App\Http\Controllers\EstadoParadaController;
 use App\Http\Controllers\EstadoRecorridoController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ParadaController;
+use App\Http\Controllers\ProveedorItemController;
 use App\Http\Controllers\RecorridoController;
 use App\Http\Controllers\TipoDocumentoController;
 use App\Http\Controllers\TipoItemController;
@@ -86,18 +88,20 @@ Route::middleware(['auth:api'])->group(function () {
         Route::put('/{cliente}', [ClienteController::class, 'update']);
     });
 
+    // Empresas
+    Route::get('empresas', [EmpresaController::class, 'findAll']);
+    // Proveedores
+    Route::get('proveedores-items', [ProveedorItemController::class, 'findAll']);
     // Estados items
     Route::get('estados-items', [EstadoItemController::class, 'findAll']);
     // Tipo items
-    Route::get('tipos-paradas', [TipoItemController::class, 'findAll']);
+    Route::get('tipos-items', [TipoItemController::class, 'findAll']);
     // Estados paradas
     Route::get('estados-paradas', [EstadoParadaController::class, 'findAll']);
     // Estados recorridos
     Route::get('estados-recorridos', [EstadoRecorridoController::class, 'findAll']);
     // Tipo documentos
     Route::get('tipos-documentos', [TipoDocumentoController::class, 'findAll']);
-    // Tipo paradas
-    Route::get('tipos-paradas', [TipoParadaController::class, 'findAll']);
     // Codigos area
     Route::get('codigos-area', [CodigoAreaController::class, 'findAll']);
 

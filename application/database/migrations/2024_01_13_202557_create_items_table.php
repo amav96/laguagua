@@ -30,6 +30,10 @@ return new class extends Migration
 
             $table->string('destinatario')->nullable();
 
+            $table->timestamp('entregar')->nullable();
+
+            $table->timestamp('entregado')->nullable();
+
             $table->unsignedBigInteger('empresa_id');
             $table->foreign('empresa_id')->references('id')->on('empresas');
 
