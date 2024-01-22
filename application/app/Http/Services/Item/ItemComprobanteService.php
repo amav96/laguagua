@@ -3,12 +3,12 @@
 namespace App\Http\Services\Item;
 
 use App\Exceptions\AppErrors;
-use App\Models\ComprobanteItem;
+use App\Models\ItemComprobante;
 use Illuminate\Support\Facades\Storage;
 use App\Exceptions\BussinessException;
 
 
-class ComprobanteItemService {
+class ItemComprobanteService {
 
     public function generarUrlTemporaria(array $request, int $usuarioId){
 
@@ -19,7 +19,7 @@ class ComprobanteItemService {
                 $request["nombre_archivo"], now()->addMinutes(5)
             );
             
-            $comprobante = ComprobanteItem::create([
+            $comprobante = ItemComprobante::create([
                 "item_id"       => $request["item_id"],
                 "usuario_id"    => $usuarioId
             ]);
@@ -39,13 +39,13 @@ class ComprobanteItemService {
         ];
     }
 
-    public function updateComprobante(ComprobanteItem $comprobanteItem, array $request) :ComprobanteItem {
+    public function updateComprobante(ItemComprobante $itemComprobante, array $request) :ItemComprobante {
 
         beginTransaction();
         try {
 
-            $comprobanteItem->path = $request["path"];
-            $comprobanteItem->save();
+            $itemComprobante->path = $request["path"];
+            $itemComprobante->save();
 
         } catch (\Throwable $th) {
             rollBack();
@@ -53,7 +53,7 @@ class ComprobanteItemService {
         }
         
         commit();
-        return $comprobanteItem;
+        return $itemComprobante;
 
     }
 

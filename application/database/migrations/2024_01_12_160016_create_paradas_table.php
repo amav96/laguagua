@@ -29,8 +29,8 @@ return new class extends Migration
 
             $table->string("provincia");
 
-            $table->unsignedBigInteger('estado_parada_id')->nullable();
-            $table->foreign('estado_parada_id')->references('id')->on('estados_paradas');
+            $table->unsignedBigInteger('parada_estado_id')->nullable();
+            $table->foreign('parada_estado_id')->references('id')->on('paradas_estados');
 
             $table->dateTime("realizado_en")->nullable();
 
@@ -53,13 +53,13 @@ return new class extends Migration
             $table->dropForeign(['recorrido_id']);
         });
         
-        Schema::table('estados_paradas', function (Blueprint $table) {
-            $table->dropForeign(['estado_parada_id']);
+        Schema::table('paradas_estados', function (Blueprint $table) {
+            $table->dropForeign(['parada_estado_id']);
         });
 
 
-        Schema::table('proveedores_items', function (Blueprint $table) {
-            $table->dropForeign(['proveedor_item_id']);
+        Schema::table('items_proveedores', function (Blueprint $table) {
+            $table->dropForeign(['item_proveedor_id']);
         });
 
         Schema::dropIfExists('paradas');

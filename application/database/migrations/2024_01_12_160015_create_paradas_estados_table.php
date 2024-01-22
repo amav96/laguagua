@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\EstadoParada;
+use App\Models\ParadaEstado;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('estados_paradas', function (Blueprint $table) {
+        Schema::create('paradas_estados', function (Blueprint $table) {
             $table->id();
 
             $table->string("nombre");
@@ -21,7 +21,7 @@ return new class extends Migration
 
         });
 
-        EstadoParada::insert([
+        ParadaEstado::insert([
             [
                 "nombre" => "Preparado",
                 "codigo" => "preparado",
@@ -46,6 +46,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('estados_paradas');
+        Schema::dropIfExists('paradas_estados');
     }
 };

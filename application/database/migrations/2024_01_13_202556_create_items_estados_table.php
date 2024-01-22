@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\EstadoItem;
+use App\Models\ItemEstado;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('estados_items', function (Blueprint $table) {
+        Schema::create('items_estados', function (Blueprint $table) {
             $table->id();
 
             $table->string("nombre");
@@ -20,14 +20,14 @@ return new class extends Migration
             $table->string("codigo");
         });
 
-        EstadoItem::insert([
-            [
-                "nombre"    => "En espera",
-                "codigo"    => "en-espera"
-            ],
+        ItemEstado::insert([
             [
                 "nombre"    => "Preparado",
                 "codigo"    => "preparado"
+            ],
+            [
+                "nombre"    => "En camino",
+                "codigo"    => "en-camino"
             ],
             [
                 "nombre"    => "Entregado",
@@ -49,6 +49,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('estados_items');
+        Schema::dropIfExists('items_estados');
     }
 };

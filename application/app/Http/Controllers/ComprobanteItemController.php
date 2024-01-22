@@ -3,27 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\BussinessException;
-use Illuminate\Http\Request;
-use App\Http\Requests\Item\SaveComprobanteItemRequest;
-use App\Http\Services\Item\ComprobanteItemService;
-use App\Http\Services\Item\ItemService;
-use App\Models\ComprobanteItem;
+use App\Http\Requests\Item\SaveItemComprobanteRequest;
+use App\Http\Services\Item\ItemComprobanteService;
+use App\Models\ItemComprobante;
 
-class ComprobanteItemController extends Controller
+class ItemComprobanteController extends Controller
 {
 
     public function __construct(
-        public ComprobanteItemService $comprobanteItemService
+        public ItemComprobanteService $itemComprobanteService
     ){}
 
 
-    public function generarUrlTemporaria(SaveComprobanteItemRequest $request){
+    public function generarUrlTemporaria(SaveItemComprobanteRequest $request){
 
         try {
 
             $usuario = $request->user();
 
-            $comprobante = $this->comprobanteItemService->generarUrlTemporaria($request->all(), $usuario->id);
+            $comprobante = $this->itemComprobanteService->generarUrlTemporaria($request->all(), $usuario->id);
             
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(),  400);
@@ -33,10 +31,10 @@ class ComprobanteItemController extends Controller
         
     }
 
-    public function updateComprobante(ComprobanteItem $comprobanteItem,  SaveComprobanteItemRequest $request){
+    public function updateComprobante(ItemComprobante $itemComprobante,  SaveItemComprobanteRequest $request){
      
         try {
-            $comprobante = $this->comprobanteItemService->updateComprobante($comprobanteItem, $request->all());
+            $comprobante = $this->itemComprobanteService->updateComprobante($itemComprobante, $request->all());
             
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(),  400);

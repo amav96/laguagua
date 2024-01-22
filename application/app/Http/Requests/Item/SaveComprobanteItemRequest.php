@@ -6,7 +6,7 @@ use App\Rules\Item\PerteneceItemUsuarioRule;
 use App\Traits\RequestValidationHandler;
 use Illuminate\Foundation\Http\FormRequest;
 
-class SaveComprobanteItemRequest extends FormRequest
+class SaveItemComprobanteRequest extends FormRequest
 {
     use RequestValidationHandler;
 

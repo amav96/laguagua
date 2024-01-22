@@ -4,8 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -36,13 +35,14 @@ class Parada extends Model
      */
     protected $guarded = [];
 
-    public function estadoParada(): HasOne
+    public function paradaEstado(): HasOne
     {
-        return $this->hasOne(EstadoParada::class, "id", "estado_parada_id");
+        return $this->hasOne(ParadaEstado::class, "id", "parada_estado_id");
     }
 
-    public function items(): HasManyThrough
+    public function items(): BelongsToMany
     {
-        return $this->hasManyThrough(Item::class, ParadaItem::class, 'parada_id', 'id', 'id', 'item_id');
+        return $this->belongsToMany(Item::class, 'paradas_items', 'parada_id', 'item_id');
     }
+    
 }

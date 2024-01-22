@@ -27,7 +27,7 @@ class SaveItemRequest extends FormRequest
 
         if ($this->isMethod("PATCH")) {
             $rules = [
-                "estado_item_id"    => "required|integer|exists:estados_items,id",
+                "item_estado_id"    => "required|integer|exists:items_estados,id",
                 "parada_id"         => "nullable|integer|exists:paradas,id",
             ];
             return $rules;
@@ -37,27 +37,25 @@ class SaveItemRequest extends FormRequest
             "empresa_id"        => "required|integer|exists:empresas,id",
             "parada_id"         => "nullable|integer|exists:paradas,id",
             "rider_id"          => "nullable|integer|exists:usuarios,id",
-            "tipo_item_id"      => "required|integer|exists:tipos_items,id",
-            "proveedor_item_id" => "required|integer|exists:proveedores_items,id",
+            "item_tipo_id"      => "required|integer|exists:items_tipos,id",
+            "item_proveedor_id" => "required|integer|exists:items_proveedores,id",
             "destinatario"      => "nullable|string|max:255",
             "track_id"          => "nullable|string|max:255",
         ];
     
         if ($this->isMethod("POST")) {
             $rules += [
-                "estado_item_id"    => "nullable|integer|exists:estados_items,id",
+                "item_estado_id"    => "nullable|integer|exists:items_estados,id",
                 "cliente_id"        => "nullable|integer|exists:clientes,id",
             ];
         }
     
         if ($this->isMethod("PUT")) {
             $rules += [
-                "estado_item_id"    => "required|integer|exists:estados_items,id",
+                "item_estado_id"    => "required|integer|exists:items_estados,id",
             ];
         }
 
-        
-    
         return $rules;
     }
 }

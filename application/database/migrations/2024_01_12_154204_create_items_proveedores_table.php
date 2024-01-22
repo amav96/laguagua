@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\EstadoRecorrido;
+use App\Models\ItemProveedor;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,24 +12,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('estados_recorridos', function (Blueprint $table) {
+        Schema::create('items_proveedores', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+            
+            $table->string("nombre");
+
+            $table->integer("escanear")->default(0);
+
+            $table->timestamps();
         });
 
-        EstadoRecorrido::insert([
+        ItemProveedor::insert([
             [
-                "nombre" => "preparado",
+                "nombre" => "MERCADO LIBRE"
             ],
             [
-                "nombre" => "iniciado",
+                "nombre" => "INDEPENDIENTE"
             ],
-            [
-                "nombre" => "finalizado",
-            ],
-            [
-                "nombre" => "cancelado",
-            ]
         ]);
     }
 
@@ -38,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('estados_recorridos');
+        Schema::dropIfExists('items_proveedores');
     }
 };

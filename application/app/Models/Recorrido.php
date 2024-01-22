@@ -34,8 +34,8 @@ class Recorrido extends Model
      */
     protected $guarded = [];
 
-    public function estadoRecorrido() : HasOne {
-        return $this->hasOne(EstadoRecorrido::class, 'id', 'estado_recorrido_id');
+    public function recorridoEstado() : HasOne {
+        return $this->hasOne(RecorridoEstado::class, 'id', 'recorrido_estado_id');
     }
 
     public function paradas() : HasMany {

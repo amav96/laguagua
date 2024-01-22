@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comprobantes_ordenes', function (Blueprint $table) {
+        Schema::create('ordenes_comprobantes', function (Blueprint $table) {
             $table->id();
 
             $table->string("path");
@@ -33,6 +33,6 @@ return new class extends Migration
             $table->dropForeign(['parada_id']);
         });
 
-        Schema::dropIfExists('comprobantes_ordenes');
+        Schema::dropIfExists('ordenes_comprobantes');
     }
 };

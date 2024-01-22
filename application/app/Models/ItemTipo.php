@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TipoItem extends Model
+class ItemTipo extends Model
 {
     use HasFactory;
 
@@ -15,7 +15,7 @@ class TipoItem extends Model
      * Table name.
      * @var string.
      */
-    protected $table = 'tipos_items';
+    protected $table = 'items_tipos';
 
     /**
      * Table primary key.

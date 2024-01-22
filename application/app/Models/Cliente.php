@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Cliente extends Model
 {
@@ -33,4 +34,13 @@ class Cliente extends Model
      * @var array.
      */
     protected $guarded = [];
+
+    public function clientesNumeros()
+    {
+        return $this->hasMany(ClienteNumero::class);
+    }
+
+    public function tipoDocumento() : HasOne {
+        return $this->hasOne(TipoDocumento::class, 'id', 'tipo_documento_id');
+    }
 }

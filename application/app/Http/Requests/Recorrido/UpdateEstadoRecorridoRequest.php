@@ -26,10 +26,10 @@ class UpdateEstadoRecorridoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "estado_recorrido_id" => [
+            "recorrido_estado_id" => [
                 "required",
                 "integer",
-                "exists:estados_recorridos,id",
+                "exists:recorridos_estados,id",
             ]
         ];
     }

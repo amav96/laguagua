@@ -6,7 +6,7 @@ namespace App\Http\Services\Recorrido;
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Models\Recorrido;
-use App\Models\EstadoRecorrido;
+use App\Models\RecorridoEstado;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Builder;
@@ -57,7 +57,7 @@ class RecorridoService {
             $recorrido = Recorrido::create([
                 "rider_id"              => $request["rider_id"],
                 // "empresa_id"            => $request["empresa_id"],
-                "estado_recorrido_id"   => EstadoRecorrido::PREPARADO,
+                "recorrido_estado_id"   => RecorridoEstado::PREPARADO,
                 "inicio"                => $inicio,
                 "creado_por"            => $creadoPor
             ]);
@@ -194,14 +194,14 @@ class RecorridoService {
 
         try {
 
-            $recorrido->estado_recorrido_id = $request["estado_recorrido_id"];
+            $recorrido->recorrido_estado_id = $request["recorrido_estado_id"];
             $recorrido->save();
 
         } catch (\Throwable $th) {
             throw new BussinessException(AppErrors::RECORRIDO_ACTUALIZAR_ERROR_MESSAGE, AppErrors::RECORRIDO_ACTUALIZAR_ERROR_CODE);
         }
 
-        return $recorrido->load(['estadoRecorrido']);
+        return $recorrido->load(['recorridoEstado']);
     }
     
     public function perteneceUsuario(int $riderId, int $recorridoId) : bool {

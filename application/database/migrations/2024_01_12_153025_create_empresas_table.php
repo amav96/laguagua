@@ -19,7 +19,7 @@ return new class extends Migration
         });
 
         Empresa::insert([
-          "nombre"      => "GLOBO DY",
+          "nombre"      => "INDEPENDIENTE",
           "created_at"  => now(),
           "updated_at"  => now()  
         ]);

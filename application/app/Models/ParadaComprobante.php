@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ComprobanteParada extends Model
+class ParadaComprobante extends Model
 {
     use HasFactory;
 
@@ -13,7 +13,7 @@ class ComprobanteParada extends Model
      * Table name.
      * @var string.
      */
-    protected $table = 'comprobantes_paradas';
+    protected $table = 'paradas_comprobantes';
 
     /**
      * Table primary key.

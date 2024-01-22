@@ -5,27 +5,31 @@ namespace App\Http\Services\Cliente;
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Models\Cliente;
+use App\Models\ClienteNumero;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 
 class ClienteService {
 
-    public function findAll(array $filtros) {
+    public function findAll(array $params) {
 
         $query = Cliente::query();
-        
+      
         $query = $query
-                ->when(isset($filtros["cliente_id"]), function (Builder $q) use($filtros) : void {
-                    $q->where('id', $filtros["cliente_id"]); 
+                ->when(isset($params["incluir"]), function (Builder $q) use($params) : void {
+                    $q->with(explode(",", $params["incluir"])); 
                 })
-                ->when(isset($filtros["tipo_documento_id"]), function (Builder $q) use($filtros) : void {
-                    $q->where('tipo_documento_id', $filtros["tipo_documento_id"]); 
+                ->when(isset($params["cliente_id"]), function (Builder $q) use($params) : void {
+                    $q->where('id', $params["cliente_id"]); 
                 })
-                ->when(isset($filtros["numero_documento"]), function (Builder $q) use($filtros) : void {
-                    $q->where('numero_documento', 'LIKE', "%".$filtros["numero_documento"]."%"); 
+                ->when(isset($params["tipo_documento_id"]), function (Builder $q) use($params) : void {
+                    $q->where('tipo_documento_id', $params["tipo_documento_id"]); 
+                })
+                ->when(isset($params["numero_documento"]), function (Builder $q) use($params) : void {
+                    $q->where('numero_documento', 'LIKE', "%".$params["numero_documento"]."%"); 
                 });
 
-        if(isset($filtros["page"])){
+        if(isset($params["page"])){
             $query = $query->paginate();
         } else {
             $query = $query->get();
@@ -44,14 +48,21 @@ class ClienteService {
                 "tipo_documento_id" => $request["tipo_documento_id"] ?? null,
                 "numero_documento" => isset($request["numero_documento"]) ? trim($request["numero_documento"]) : null,
                 "nombre" => isset($request["nombre"]) ? trim($request["nombre"]) : null,
-                "codigo_area_id" => $request["codigo_area_id"] ?? null,
-                "numero_celular" => isset($request["numero_celular"]) ? trim($request["numero_celular"]) : null,
-                "numero_fijo" => isset($request["numero_fijo"]) ? trim($request["numero_fijo"]) : null,
                 "empresa_id" => $request["empresa_id"] ?? null,
                 "creado_por" => $usuarioId
             ]);
 
             $cliente = Cliente::create($clienteData);
+
+            if($request["clientes_numeros"]){
+                foreach($request["clientes_numeros"] as $contacto){
+                    ClienteNumero::create([
+                        "cliente_id"        => $cliente->id,
+                        "codigo_area_id"    => $contacto["codigo_area_id"],
+                        "numero"            => $contacto["numero"],
+                    ]);
+                }
+            }
 
         } catch (\Throwable $th) {
             rollBack();
@@ -59,7 +70,7 @@ class ClienteService {
         }
 
         commit();
-        return $cliente;
+        return $cliente->load('clientesNumeros');
 
     }
     
@@ -72,21 +83,39 @@ class ClienteService {
                 'tipo_documento_id' => $request['tipo_documento_id'] ?? $cliente->tipo_documento_id,
                 'numero_documento'  => $request['numero_documento'] ?? $cliente->numero_documento,
                 'nombre'            => $request['nombre'] ?? $cliente->nombre,
-                'codigo_area_id'    => $request['codigo_area_id'] ?? $cliente->codigo_area_id,
-                'numero_celular'    => $request['numero_celular'] ?? $cliente->numero_celular,
-                'numero_fijo'       => $request['numero_fijo'] ?? $cliente->numero_fijo,
-                'empresa_id'        => $request['empresa_id'] ?? $cliente->empresa_id,
+                "empresa_id"        => $request["empresa_id"] ?? null,
             ]);
     
             $cliente->save();
+
+           
+            if ($request["clientes_numeros"]) {
+                foreach ($request["clientes_numeros"] as $contacto) {
+                    if (isset($contacto["id"])) {
+                        // Si hay un ID, actualiza el registro existente
+                        $clienteNumero = ClienteNumero::findOrFail($contacto["id"]);
+                        $clienteNumero->update([
+                            "codigo_area_id" => $contacto["codigo_area_id"],
+                            "numero" => $contacto["numero"],
+                        ]);
+                    } else {
+                        // Si no hay un ID, crea un nuevo registro
+                        $cliente->clientesNumeros()->create([
+                            "codigo_area_id" => $contacto["codigo_area_id"],
+                            "numero" => $contacto["numero"],
+                        ]);
+                    }
+                }
+            }
             
         } catch (\Throwable $th) {
             rollBack();
+
             throw new BussinessException(AppErrors::CLIENTE_ACTUALIZAR_ERROR_MESSAGE, AppErrors::CLIENTE_ACTUALIZAR_ERROR_CODE);
         }
 
         commit();
-        return $cliente;
+        return $cliente->load('clientesNumeros');
 
     }
 }

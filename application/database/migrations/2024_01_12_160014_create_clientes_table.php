@@ -54,11 +54,11 @@ return new class extends Migration
             $table->dropForeign(['recorrido_id']);
         });
 
-        Schema::table('tipos_documentos', function (Blueprint $table) {
+        Schema::table('codigos_area', function (Blueprint $table) {
             $table->dropForeign(['codigo_area_id']);
         });
 
-        Schema::table('tipos_documentos', function (Blueprint $table) {
+        Schema::table('empresas', function (Blueprint $table) {
             $table->dropForeign(['empresa_id']);
         });
 

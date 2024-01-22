@@ -5,22 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EstadoRecorrido extends Model
+class OrdenComprobante extends Model
 {
     use HasFactory;
-
-    const PREPARADO = 1;
-    const INICIADO = 2;
-    const FINALIZADO = 3;
-    const CANCELADO = 4;
-
-    public $timestamps = false;
 
      /**
      * Table name.
      * @var string.
      */
-    protected $table = 'estados_recorridos';
+    protected $table = 'ordenes_comprobantes';
 
     /**
      * Table primary key.
@@ -38,8 +31,4 @@ class EstadoRecorrido extends Model
      * @var array.
      */
     protected $guarded = [];
-
-     // COLUMNS
-    // "id" => "bigint",
-    // "nombre"=> "varchar",
 }

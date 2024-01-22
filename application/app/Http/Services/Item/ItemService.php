@@ -5,23 +5,44 @@ namespace App\Http\Services\Item;
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 
-use App\Models\EstadoItem;
-use App\Models\EstadoParada;
+use App\Models\ItemEstado;
+use App\Models\ParadaEstado;
 use App\Models\Item;
 use App\Models\Parada;
 use App\Models\ParadaItem;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 
 class ItemService {
 
+    public function findAll(array $parametros, int $userId,  array $permisos = []) {
+
+        $query = Item::query();
+        $query = $query
+                ->when(isset($parametros["incluye"]), function (Builder $q) use($parametros) : void {
+                    $q->with(explode(",", $parametros["incluye"]));
+                })
+                ->when(isset($parametros["item_id"]), function (Builder $q) use($parametros) : void {
+                    $q->where('id', $parametros["item_id"]); 
+                });
+
+        if(isset($parametros["page"])){
+            $query = $query->paginate();
+        } else {
+            $query = $query->get();
+        }
+
+        return $query;
+
+    }
+
     public function create(array $request, int $creadoPor) : Item{
 
 
-        $estadoItemId = isset($request["estado_item_id"]) 
-        ? $request["estado_item_id"] 
-        : ((isset($paradaId)) 
-            ? EstadoItem::PREPARADO 
-            : EstadoItem::EN_ESPERA);
+        $itemEstadoId = isset($request["item_estado_id"]) 
+        ? $request["item_estado_id"] 
+        : ItemEstado::PREPARADO ;
 
         $this->validarItemDuplicado($request);
 
@@ -30,10 +51,10 @@ class ItemService {
 
            
             $item = Item::create([
-                "tipo_item_id"          => $request["tipo_item_id"],
-                "proveedor_item_id"     => $request["proveedor_item_id"],
+                "item_tipo_id"          => $request["item_tipo_id"],
+                "item_proveedor_id"     => $request["item_proveedor_id"],
                 "empresa_id"            => $request["empresa_id"],
-                "estado_item_id"        => $estadoItemId,
+                "item_estado_id"        => $itemEstadoId,
                 "track_id"              => $request["track_id"] ?? null,
                 "cliente_id"            => $request["cliente_id"] ?? null,
                 "destinatario"          => $request["destinatario"] ?? null,
@@ -56,9 +77,9 @@ class ItemService {
 
         return $item->load([
             "cliente",
-            "tipoItem",
-            "proveedorItem",
-            "estadoItem"
+            "itemTipo",
+            "itemProveedor",
+            "itemEstado"
         ]);
 
     }
@@ -69,10 +90,10 @@ class ItemService {
         try {
 
             $item->fill([
-                "tipo_item_id"          => $request["tipo_item_id"],
-                "proveedor_item_id"     => $request["proveedor_item_id"],
+                "item_tipo_id"          => $request["item_tipo_id"],
+                "item_proveedor_id"     => $request["item_proveedor_id"],
                 "empresa_id"            => $request["empresa_id"],
-                "estado_item_id"        => $request["estado_item_id"],
+                "item_estado_id"        => $request["item_estado_id"],
                 "track_id"              => $request["track_id"] ?? $item->track_id,
                 "destinatario"          => $request["destinatario"] ?? $item->destinatario,
             ]);
@@ -88,9 +109,9 @@ class ItemService {
 
         return $item->load([
             "cliente",
-            "tipoItem",
-            "proveedorItem",
-            "estadoItem"
+            "itemTipo",
+            "itemProveedor",
+            "itemEstado"
         ]);
     }
 
@@ -98,32 +119,32 @@ class ItemService {
 
         beginTransaction();
         try {
-            $item->estado_item_id = $request["estado_item_id"];
+            $item->item_estado_id = $request["item_estado_id"];
             $item->save();
 
             $itemActualizado = $item->load([
-                "estadoItem"
+                "itemEstado"
             ]);
             
             if(isset($request["parada_id"])){
 
-                $estadoParadaId = null;
+                $paradaEstadoId = null;
                
-                switch($itemActualizado->estadoItem->codigo){
+                switch($itemActualizado->itemEstado->codigo){
                     case "en-espera";
-                    $estadoParadaId = EstadoParada::PREPARADO;
+                    $paradaEstadoId = ParadaEstado::PREPARADO;
                     case "preparado";
-                    $estadoParadaId = EstadoParada::PREPARADO;
+                    $paradaEstadoId = ParadaEstado::PREPARADO;
                     case "en-camino";
-                    $estadoParadaId = EstadoParada::EN_CAMINO;
+                    $paradaEstadoId = ParadaEstado::EN_CAMINO;
                     case "entregado";
-                    $estadoParadaId = EstadoParada::VISITADO;
+                    $paradaEstadoId = ParadaEstado::VISITADO;
                     case "retirado";
-                    $estadoParadaId = EstadoParada::VISITADO;
+                    $paradaEstadoId = ParadaEstado::VISITADO;
                     case "cancelado";
-                    $estadoParadaId = EstadoParada::CANCELADO;
+                    $paradaEstadoId = ParadaEstado::CANCELADO;
                 }
-                Parada::where("id", $request["parada_id"])->update(["estado_parada_id", $estadoParadaId]);
+                Parada::where("id", $request["parada_id"])->update(["parada_estado_id", $paradaEstadoId]);
             }
 
         } catch (\Throwable $th) {
@@ -136,7 +157,7 @@ class ItemService {
     }
 
     private function validarItemDuplicado(array $request){
-        if(isset($request["track_id"]) &&  Item::where("proveedor_item_id", $request["proveedor_item_id"])
+        if(isset($request["track_id"]) &&  Item::where("item_proveedor_id", $request["item_proveedor_id"])
                 ->where("empresa_id", $request["empresa_id"])
                 ->where("track_id", $request["track_id"])
                 ->exists()){

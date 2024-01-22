@@ -5,16 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EstadoItem extends Model
+class ClienteNumero extends Model
 {
     use HasFactory;
-
-    const EN_ESPERA  = 1;
-    const PREPARADO  = 2;
-    const EN_CAMINO  = 3;
-    const ENTREGADO  = 4;
-    const RETIRADO   = 5;
-    const CANCELADO  = 6;
 
     public $timestamps = false;
 
@@ -22,7 +15,7 @@ class EstadoItem extends Model
      * Table name.
      * @var string.
      */
-    protected $table = 'estados_items';
+    protected $table = 'clientes_numeros';
 
     /**
      * Table primary key.

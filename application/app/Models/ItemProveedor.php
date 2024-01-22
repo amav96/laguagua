@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ComprobanteItem extends Model
+class ItemProveedor extends Model
 {
     use HasFactory;
 
@@ -13,7 +13,7 @@ class ComprobanteItem extends Model
      * Table name.
      * @var string.
      */
-    protected $table = 'comprobantes_items';
+    protected $table = 'items_proveedores';
 
     /**
      * Table primary key.
@@ -26,7 +26,6 @@ class ComprobanteItem extends Model
      * @var bool.
      */
     public $incrementing = true;
-
 
     /**
      * @var array.

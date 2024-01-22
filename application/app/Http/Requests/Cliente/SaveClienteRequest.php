@@ -26,25 +26,32 @@ class SaveClienteRequest extends FormRequest
     {
         $rules = [
             "tipo_documento_id"     => "required|integer|max_digits:1|exists:tipos_documentos,id",
-            "numero_documento"      => "required|string|max:30",
-            "codigo_area_id"        => [
+            "numero_documento"      => "nullable|string|max:30",
+            "clientes_numeros" => [
                 "nullable",
+                "array",
+            ],
+            "clientes_numeros.*.codigo_area_id" => [
+                "required_with:clientes_numeros",
                 "integer",
                 "max_digits:2",
-                "exists:codigos_area,id"
+                "exists:codigos_area,id",
+            ],
+            "clientes_numeros.*.numero" => [
+                "required_with:clientes_numeros",
+                "string",
+                "max:30"
+            ],
+            "clientes_numeros.*.id" => [
+                "nullable",
+                "integer",
+                "max_digits:100"
             ],
             "nombre"                => "nullable|string",
-            "numero_celular"        => "nullable|string|max:15",
-            "numero_fijo"           => "nullable|string|max:20",
             "empresa_id"            => "required|integer|exists:empresas,id"
         ];
 
-        if(request()->numero_celular){
-            unset($rules["codigo_area_id"]["nullable"]);
-            $rules["codigo_area_id"][] = "required";
-        }
 
-    
         return $rules;
     }
 

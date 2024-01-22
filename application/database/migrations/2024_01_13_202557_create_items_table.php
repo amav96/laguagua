@@ -17,16 +17,16 @@ return new class extends Migration
             $table->unsignedBigInteger('cliente_id')->nullable();
             $table->foreign('cliente_id')->references('id')->on('clientes');
 
-            $table->unsignedBigInteger('tipo_item_id');
-            $table->foreign('tipo_item_id')->references('id')->on('tipos_items');
+            $table->unsignedBigInteger('item_tipo_id');
+            $table->foreign('item_tipo_id')->references('id')->on('items_tipos');
 
             $table->string('track_id')->nullable();
 
-            $table->unsignedBigInteger('proveedor_item_id');
-            $table->foreign('proveedor_item_id')->references('id')->on('proveedores_items');
+            $table->unsignedBigInteger('item_proveedor_id');
+            $table->foreign('item_proveedor_id')->references('id')->on('items_proveedores');
 
-            $table->unsignedBigInteger('estado_item_id');
-            $table->foreign('estado_item_id')->references('id')->on('estados_items');
+            $table->unsignedBigInteger('item_estado_id');
+            $table->foreign('item_estado_id')->references('id')->on('items_estados');
 
             $table->string('destinatario')->nullable();
 
@@ -52,9 +52,9 @@ return new class extends Migration
 
         Schema::table('items', function (Blueprint $table) {
             $table->dropForeign(['cliente_id']);
-            $table->dropForeign(['tipo_item_id']);
-            $table->dropForeign(['proveedor_item_id']);
-            $table->dropForeign(['estado_item_id']);
+            $table->dropForeign(['item_tipo_id']);
+            $table->dropForeign(['item_proveedor_id']);
+            $table->dropForeign(['item_estado_id']);
             $table->dropForeign(['empresa_id']);
             $table->dropForeign(['creado_por']);
         });

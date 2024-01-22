@@ -4,7 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -50,7 +50,10 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function empresas() : HasManyThrough {
-        return $this->hasManyThrough(Empresa::class, UsuarioEmpresa::class, 'empresa_id', 'id', 'id');
+    public function empresas() : BelongsToMany {
+       
+        return $this->belongsToMany(Empresa::class, 'usuarios_empresas', 'usuario_id', 'empresa_id');
     }
 }
+
+

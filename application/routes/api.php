@@ -3,18 +3,17 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CodigoAreaController;
-use App\Http\Controllers\ComprobanteItemController;
+use App\Http\Controllers\ItemComprobanteController;
 use App\Http\Controllers\EmpresaController;
-use App\Http\Controllers\EstadoItemController;
+use App\Http\Controllers\ItemEstadoController;
 use App\Http\Controllers\EstadoParadaController;
-use App\Http\Controllers\EstadoRecorridoController;
+use App\Http\Controllers\RecorridoEstadoController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ItemTipoController;
 use App\Http\Controllers\ParadaController;
 use App\Http\Controllers\ProveedorItemController;
 use App\Http\Controllers\RecorridoController;
 use App\Http\Controllers\TipoDocumentoController;
-use App\Http\Controllers\TipoItemController;
-use App\Http\Controllers\TipoParadaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -69,6 +68,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     // Items
     Route::prefix('items')->group(function () {
+        Route::get('/{item_id?}', [ItemController::class, 'findAll']);
         Route::post('', [ItemController::class, 'create']);
         Route::put('{item}', [ItemController::class, 'update']);
         Route::patch('/estado/{item}', [ItemController::class, 'updateEstado']);
@@ -77,8 +77,8 @@ Route::middleware(['auth:api'])->group(function () {
 
     // comprobantes items
     Route::prefix('comprobantes-items')->group(function () {
-        Route::post('/url-temporaria', [ComprobanteItemController::class, 'generarUrlTemporaria']);
-        Route::patch('/url-temporaria/{comprobanteItem}', [ComprobanteItemController::class, 'updateComprobante']);
+        Route::post('/url-temporaria', [ItemComprobanteController::class, 'generarUrlTemporaria']);
+        Route::patch('/url-temporaria/{ItemComprobante}', [ItemComprobanteController::class, 'updateComprobante']);
     });
 
     // Clientes
@@ -91,15 +91,15 @@ Route::middleware(['auth:api'])->group(function () {
     // Empresas
     Route::get('empresas', [EmpresaController::class, 'findAll']);
     // Proveedores
-    Route::get('proveedores-items', [ProveedorItemController::class, 'findAll']);
+    Route::get('items-proveedores', [ProveedorItemController::class, 'findAll']);
     // Estados items
-    Route::get('estados-items', [EstadoItemController::class, 'findAll']);
+    Route::get('items-estados', [ItemEstadoController::class, 'findAll']);
     // Tipo items
-    Route::get('tipos-items', [TipoItemController::class, 'findAll']);
+    Route::get('items-tipos', [ItemTipoController::class, 'findAll']);
     // Estados paradas
-    Route::get('estados-paradas', [EstadoParadaController::class, 'findAll']);
+    Route::get('paradas-estados', [EstadoParadaController::class, 'findAll']);
     // Estados recorridos
-    Route::get('estados-recorridos', [EstadoRecorridoController::class, 'findAll']);
+    Route::get('recorridos-estados', [RecorridoEstadoController::class, 'findAll']);
     // Tipo documentos
     Route::get('tipos-documentos', [TipoDocumentoController::class, 'findAll']);
     // Codigos area

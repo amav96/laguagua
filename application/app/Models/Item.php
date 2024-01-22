@@ -38,15 +38,21 @@ class Item extends Model
         return $this->hasOne(Cliente::class, 'id', 'cliente_id');
     }
 
-    public function tipoItem() : HasOne {
-        return $this->hasOne(TipoItem::class, 'id', 'tipo_item_id');
+    public function itemTipo() : HasOne {
+        return $this->hasOne(ItemTipo::class, 'id', 'item_tipo_id');
     }
 
-    public function proveedorItem() : HasOne {
-        return $this->hasOne(ProveedorItem::class, 'id', 'proveedor_item_id');
+    public function itemProveedor() : HasOne {
+        return $this->hasOne(ItemProveedor::class, 'id', 'item_proveedor_id');
     }
 
-    public function estadoItem() : HasOne {
-        return $this->hasOne(EstadoItem::class, 'id', 'estado_item_id');
+    public function itemEstado() : HasOne {
+        return $this->hasOne(ItemEstado::class, 'id', 'item_estado_id');
     }
+
+    public function empresa() : HasOne {
+        return $this->hasOne(Empresa::class, 'id', 'empresa_id');
+    }
+
+
 }

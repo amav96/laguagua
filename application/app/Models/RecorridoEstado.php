@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EstadoParada extends Model
+class RecorridoEstado extends Model
 {
     use HasFactory;
 
-    CONST PREPARADO = 1;
-    CONST EN_CAMINO = 2;
-    CONST VISITADO  = 3;
-    CONST CANCELADO = 4;
+    const PREPARADO = 1;
+    const INICIADO = 2;
+    const FINALIZADO = 3;
+    const CANCELADO = 4;
 
     public $timestamps = false;
 
@@ -20,7 +20,7 @@ class EstadoParada extends Model
      * Table name.
      * @var string.
      */
-    protected $table = 'estados_paradas';
+    protected $table = 'recorridos_estados';
 
     /**
      * Table primary key.
@@ -38,4 +38,8 @@ class EstadoParada extends Model
      * @var array.
      */
     protected $guarded = [];
+
+     // COLUMNS
+    // "id" => "bigint",
+    // "nombre"=> "varchar",
 }

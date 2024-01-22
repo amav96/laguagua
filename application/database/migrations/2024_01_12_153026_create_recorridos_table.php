@@ -18,11 +18,11 @@ return new class extends Migration
             $table->unsignedBigInteger('rider_id');
             $table->foreign('rider_id')->references('id')->on('usuarios');
 
-            $table->unsignedBigInteger('creador_por');
-            $table->foreign('creador_por')->references('id')->on('usuarios');
+            $table->unsignedBigInteger('creado_por');
+            $table->foreign('creado_por')->references('id')->on('usuarios');
 
-            $table->unsignedBigInteger('estado_recorrido_id');
-            $table->foreign('estado_recorrido_id')->references('id')->on('estados_recorridos');
+            $table->unsignedBigInteger('recorrido_estado_id');
+            $table->foreign('recorrido_estado_id')->references('id')->on('recorridos_estados');
 
             $table->timestamp("inicio");
             
@@ -64,8 +64,8 @@ return new class extends Migration
             $table->dropForeign(['rider_id']);
         });
 
-        Schema::table('estados_recorridos', function (Blueprint $table) {
-            $table->dropForeign(['estado_recorrido_id']);
+        Schema::table('recorridos_estados', function (Blueprint $table) {
+            $table->dropForeign(['recorrido_estado_id']);
         });
 
         Schema::dropIfExists('recorridos');

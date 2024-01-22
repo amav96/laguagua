@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\TipoItem;
+use App\Models\RecorridoEstado;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,23 +12,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tipos_items', function (Blueprint $table) {
+        Schema::create('recorridos_estados', function (Blueprint $table) {
             $table->id();
-
-            $table->string("nombre");
-
-            $table->string("codigo");
+            $table->string('nombre');
         });
 
-        TipoItem::insert([
+        RecorridoEstado::insert([
             [
-                "nombre"    => "Entrega",
-                "codigo"    => "entrega"
+                "nombre" => "preparado",
             ],
             [
-                "nombre"    => "Retiro",
-                "codigo"    => "retiro"
+                "nombre" => "iniciado",
             ],
+            [
+                "nombre" => "finalizado",
+            ],
+            [
+                "nombre" => "cancelado",
+            ]
         ]);
     }
 
@@ -37,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tipos_items');
+        Schema::dropIfExists('recorridos_estados');
     }
 };

@@ -4,7 +4,7 @@ namespace App\Http\Services\Parada;
 
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
-use App\Models\EstadoParada;
+use App\Models\ParadaEstado;
 use App\Models\Parada;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,11 +49,11 @@ class ParadaService {
             $parada->localidad              = $request["localidad"];
             $parada->provincia              = $request["provincia"];
             $parada->rider_id               = $request["rider_id"];
-            $parada->estado_parada_id       = EstadoParada::PREPARADO;
+            $parada->parada_estado_id       = ParadaEstado::PREPARADO;
 
             $parada->save();
             $parada->load([
-                "estadoParada"
+                "paradaEstado"
             ]);
 
         } catch (\Throwable $th) {
@@ -80,7 +80,7 @@ class ParadaService {
 
             $parada->save();
             $parada->load([
-                "estadoParada"
+                "paradaEstado"
             ]);
 
         } catch (\Throwable $th) {
