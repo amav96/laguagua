@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
-use App\Http\Requests\Parada\DeleteParadaRequest;
 use App\Http\Requests\Parada\SaveParadaRequest;
 use App\Http\Services\Parada\ParadaService;
 use App\Models\Parada;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ParadaController extends Controller

@@ -58,15 +58,15 @@ class SaveParadaRequest extends FormRequest
                 "string"
             ],
             "codigo_postal" => [
-                "required",
+                "nullable",
                 "string"
             ],
             "localidad" => [
-                "required",
+                "nullable",
                 "string"
             ],
             "provincia" => [
-                "required",
+                "nullable",
                 "string"
             ],
             "rider_id" => [

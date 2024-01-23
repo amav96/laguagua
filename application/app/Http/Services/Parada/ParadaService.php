@@ -45,9 +45,9 @@ class ParadaService {
             $parada->lat                    = $request["lat"];
             $parada->lng                    = $request["lng"];
             $parada->direccion_formateada   = $request["direccion_formateada"];
-            $parada->codigo_postal          = $request["codigo_postal"];
-            $parada->localidad              = $request["localidad"];
-            $parada->provincia              = $request["provincia"];
+            $parada->codigo_postal          = $request["codigo_postal"] ?? '';
+            $parada->localidad              = $request["localidad"] ?? '';
+            $parada->provincia              = $request["provincia"] ?? '';
             $parada->rider_id               = $request["rider_id"];
             $parada->parada_estado_id       = ParadaEstado::PREPARADO;
 
@@ -58,6 +58,7 @@ class ParadaService {
 
         } catch (\Throwable $th) {
             rollBack();
+            dd($th);
             throw new BussinessException(AppErrors::PARADA_CREAR_ERROR_MESSAGE, AppErrors::PARADA_CREAR_ERROR_CODE);
         }
 

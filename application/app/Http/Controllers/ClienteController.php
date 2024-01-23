@@ -76,7 +76,7 @@ class ClienteController extends Controller
 
     private function validateActualizarDocumento(array $request, Cliente $cliente){
 
-        if($request["numero_documento"] !== $cliente->numero_documento || $request["tipo_documento_id"] !== $cliente->tipo_documento_id){
+        if(isset($request["numero_documento"]) && $request["numero_documento"] !== $cliente->numero_documento || $request["tipo_documento_id"] !== $cliente->tipo_documento_id){
             if(Cliente::where("tipo_documento_id", $request["tipo_documento_id"])->where("numero_documento", $request["numero_documento"])->exists()){
                 throw new BussinessException(AppErrors::CLIENTE_EXISTENTE_MESSAGE, AppErrors::CLIENTE_EXISTENTE_CODE);
             }

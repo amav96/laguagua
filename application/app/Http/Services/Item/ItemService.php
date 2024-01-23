@@ -116,7 +116,7 @@ class ItemService {
     }
 
     public function updateEstado(Item $item, array $request){
-
+        
         beginTransaction();
         try {
             $item->item_estado_id = $request["item_estado_id"];
@@ -129,30 +129,37 @@ class ItemService {
             if(isset($request["parada_id"])){
 
                 $paradaEstadoId = null;
-               
                 switch($itemActualizado->itemEstado->codigo){
-                    case "en-espera";
-                    $paradaEstadoId = ParadaEstado::PREPARADO;
                     case "preparado";
                     $paradaEstadoId = ParadaEstado::PREPARADO;
+                    break;
                     case "en-camino";
                     $paradaEstadoId = ParadaEstado::EN_CAMINO;
+                    break;
                     case "entregado";
                     $paradaEstadoId = ParadaEstado::VISITADO;
+                    break;
                     case "retirado";
                     $paradaEstadoId = ParadaEstado::VISITADO;
+                    break;
                     case "cancelado";
                     $paradaEstadoId = ParadaEstado::CANCELADO;
+                    break;
                 }
-                Parada::where("id", $request["parada_id"])->update(["parada_estado_id", $paradaEstadoId]);
+             
+                Parada::where("id", $request["parada_id"])->update(["parada_estado_id" =>  $paradaEstadoId]);
+                
             }
 
         } catch (\Throwable $th) {
             rollBack();
+          
             throw new BussinessException(AppErrors::ITEM_ACTUALIZAR_ERROR_MESSAGE, AppErrors::ITEM_ACTUALIZAR_ERROR_CODE);
         }
 
         commit();
+        $parada = Parada::find($request["parada_id"]);
+        $itemActualizado->parada = $parada->load('paradaEstado');
         return $itemActualizado;
     }
 

@@ -18,28 +18,35 @@ return new class extends Migration
             $table->string("nombre");
 
             $table->string("codigo");
+
+            $table->string("color");
         });
 
         ItemEstado::insert([
             [
                 "nombre"    => "Preparado",
-                "codigo"    => "preparado"
+                "codigo"    => "preparado",
+                "color"     => "#FFB133"
             ],
             [
                 "nombre"    => "En camino",
-                "codigo"    => "en-camino"
+                "codigo"    => "en-camino",
+                "color"     => "#59DF2B"
             ],
             [
                 "nombre"    => "Entregado",
-                "codigo"    => "entregado"
+                "codigo"    => "entregado",
+                "color"     => "#53F31B"
             ],
             [
                 "nombre"    => "Retirado",
-                "codigo"    => "retirado"
+                "codigo"    => "retirado",
+                "color"     => "#53F31B"
             ],
             [
                 "nombre"    => "Cancelado",
-                "codigo"    => "cancelado"
+                "codigo"    => "cancelado",
+                "color"     => "#F31B1B"
             ],
         ]);
     }

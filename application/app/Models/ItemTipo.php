@@ -9,6 +9,9 @@ class ItemTipo extends Model
 {
     use HasFactory;
 
+    const ENTREGA = 1;
+    CONST RETIRO = 2;
+
     public $timestamps = false;
     
      /**

@@ -6,7 +6,6 @@ use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Models\Cliente;
 use App\Models\ClienteNumero;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 
 class ClienteService {
@@ -16,8 +15,8 @@ class ClienteService {
         $query = Cliente::query();
       
         $query = $query
-                ->when(isset($params["incluir"]), function (Builder $q) use($params) : void {
-                    $q->with(explode(",", $params["incluir"])); 
+                ->when(isset($params["incluye"]), function (Builder $q) use($params) : void {
+                    $q->with(explode(",", $params["incluye"])); 
                 })
                 ->when(isset($params["cliente_id"]), function (Builder $q) use($params) : void {
                     $q->where('id', $params["cliente_id"]); 
