@@ -19,25 +19,61 @@ return new class extends Migration
 
             $table->string("codigo");
 
+            $table->string("color");
+
+            $table->string("tipo");
+
         });
 
         ParadaEstado::insert([
             [
                 "nombre" => "Preparado",
                 "codigo" => "preparado",
+                "color"  => "",
+                "tipo"   => "postivo",
             ],
             [
                 "nombre" => "En camino",
                 "codigo" => "en-camino",
+                "color"  => "#448aff",
+                "tipo"   => "postivo",
             ],
             [
                 "nombre" => "Visitado",
                 "codigo" => "visitado",
+                "color"  => "#00c853",
+                "tipo"   => "postivo",
             ],
             [
                 "nombre" => "Cancelado",
                 "codigo" => "cancelado",
-            ]
+                "color"  => "#F31B1B",
+                "tipo"   => "negativo",
+            ],
+            [
+                "nombre" => "No responde",
+                "codigo" => "no-responde",
+                "color"  => "#F31B1B",
+                "tipo"   => "negativo",
+            ],
+            [
+                "nombre" => "Direccion incorrecta",
+                "codigo" => "direccion-incorrecta",
+                "color"  => "#F31B1B",
+                "tipo"   => "negativo",
+            ],
+            [
+                "nombre" => "Faltan datos",
+                "codigo" => "faltan-datos",
+                "color"  => "#F31B1B",
+                "tipo"   => "negativo",
+            ],
+            [
+                "nombre" => "Rechazado",
+                "codigo" => "rechazado",
+                "color"  => "#F31B1B",
+                "tipo"   => "negativo",
+            ],
         ]);
     }
 

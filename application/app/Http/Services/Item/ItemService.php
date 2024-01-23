@@ -145,6 +145,18 @@ class ItemService {
                     case "cancelado";
                     $paradaEstadoId = ParadaEstado::CANCELADO;
                     break;
+                    case "no-responde";
+                    $paradaEstadoId = ParadaEstado::NO_RESPONDE;
+                    break;
+                    case "direccion-incorrecta";
+                    $paradaEstadoId = ParadaEstado::DIRECCION_INCORRECTA;
+                    break;
+                    case "faltan-datos";
+                    $paradaEstadoId = ParadaEstado::FALTAN_DATOS;
+                    break;
+                    case "rechazado";
+                    $paradaEstadoId = ParadaEstado::RECHAZADO;
+                    break;
                 }
              
                 Parada::where("id", $request["parada_id"])->update(["parada_estado_id" =>  $paradaEstadoId]);

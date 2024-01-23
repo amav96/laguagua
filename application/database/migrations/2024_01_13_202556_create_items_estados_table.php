@@ -20,33 +20,64 @@ return new class extends Migration
             $table->string("codigo");
 
             $table->string("color");
+
+            $table->string("tipo");
         });
 
         ItemEstado::insert([
             [
                 "nombre"    => "Preparado",
                 "codigo"    => "preparado",
-                "color"     => "#FFB133"
+                "color"     => "#FFB133",
+                "tipo"      => "positivo"
             ],
             [
                 "nombre"    => "En camino",
                 "codigo"    => "en-camino",
-                "color"     => "#59DF2B"
+                "color"     => "#59DF2B",
+                "tipo"      => "positivo"
             ],
             [
                 "nombre"    => "Entregado",
                 "codigo"    => "entregado",
-                "color"     => "#53F31B"
+                "color"     => "#53F31B",
+                "tipo"      => "positivo"
             ],
             [
                 "nombre"    => "Retirado",
                 "codigo"    => "retirado",
-                "color"     => "#53F31B"
+                "color"     => "#53F31B",
+                "tipo"      => "positivo"
             ],
             [
                 "nombre"    => "Cancelado",
                 "codigo"    => "cancelado",
-                "color"     => "#F31B1B"
+                "color"     => "#F31B1B",
+                "tipo"      => "negativo"
+            ],
+            [
+                "nombre"    => "No responde",
+                "codigo"    => "no-responde",
+                "color"     => "",
+                "tipo"      => "negativo"
+            ],
+            [
+                "nombre"    => "Dirección incorrecta",
+                "codigo"    => "direccion-incorrecta",
+                "color"     => "",
+                "tipo"      => "negativo"
+            ],
+            [
+                "nombre"    => "Faltan datos",
+                "codigo"    => "faltan-datos",
+                "color"     => "",
+                "tipo"      => "negativo"
+            ],
+            [
+                "nombre"    => "Rechazado",
+                "codigo"    => "rechazado",
+                "color"     => "",
+                "tipo"      => "negativo"
             ],
         ]);
     }

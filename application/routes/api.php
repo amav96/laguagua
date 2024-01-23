@@ -6,7 +6,7 @@ use App\Http\Controllers\CodigoAreaController;
 use App\Http\Controllers\ItemComprobanteController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\ItemEstadoController;
-use App\Http\Controllers\EstadoParadaController;
+use App\Http\Controllers\ParadaEstadoController;
 use App\Http\Controllers\RecorridoEstadoController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ItemTipoController;
@@ -97,7 +97,7 @@ Route::middleware(['auth:api'])->group(function () {
     // Tipo items
     Route::get('items-tipos', [ItemTipoController::class, 'findAll']);
     // Estados paradas
-    Route::get('paradas-estados', [EstadoParadaController::class, 'findAll']);
+    Route::get('paradas-estados', [ParadaEstadoController::class, 'findAll']);
     // Estados recorridos
     Route::get('recorridos-estados', [RecorridoEstadoController::class, 'findAll']);
     // Tipo documentos

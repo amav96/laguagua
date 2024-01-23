@@ -9,11 +9,15 @@ class ItemEstado extends Model
 {
     use HasFactory;
 
-    const PREPARADO  = 1;
-    const EN_CAMINO  = 2;
-    const ENTREGADO  = 3;
-    const RETIRADO  = 4;
-    const CANCELADO   = 5;
+    const PREPARADO             = 1;
+    const EN_CAMINO             = 2;
+    const ENTREGADO             = 3;
+    const RETIRADO              = 4;
+    const CANCELADO             = 5;
+    const NO_RESPONDE           = 6;
+    const DIRECCION_INCORRECTA  = 7;
+    const FALTAN_DATOS          = 8;
+    const RECHAZADO             = 9;
 
     public $timestamps = false;
 
