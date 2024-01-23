@@ -43,6 +43,12 @@ class SaveParadaRequest extends FormRequest
      */
     public function rules(): array
     {
+        if($this->isMethod("PATCH")){
+            return [
+                "parada_estado_id"  => "required|integer|exists:paradas_estados,id",
+                "rider_id"          => "required|integer|exists:usuarios,id"
+            ];
+        }
 
         $rules = [
             "lat" => [
@@ -83,7 +89,6 @@ class SaveParadaRequest extends FormRequest
             ]
         ];
 
-        
         $this->agregarValidacionRecorrido($rules);
         
         return $rules;

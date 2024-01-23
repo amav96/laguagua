@@ -6,7 +6,6 @@ use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Models\ParadaEstado;
 use App\Models\Parada;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 
 class ParadaService {
@@ -15,8 +14,8 @@ class ParadaService {
 
         $query = Parada::query();
         $query = $query
-                ->when(isset($parametros["incluye"]), function (Builder $q) use($parametros) : void {
-                    $q->with(explode(",", $parametros["incluye"]));
+                ->when(isset($parametros["incluir"]), function (Builder $q) use($parametros) : void {
+                    $q->with(explode(",", $parametros["incluir"]));
                 })
                 ->when(isset($parametros["parada_id"]), function (Builder $q) use($parametros) : void {
                     $q->where('id', $parametros["parada_id"]); 
@@ -92,6 +91,18 @@ class ParadaService {
         commit();
         return $parada;
 
+    }
+
+    public function updateEstado(array $request, Parada $parada){
+
+        $parada->parada_estado_id   = $request["parada_estado_id"];
+        $parada->save();
+
+        $parada->load([
+            "paradaEstado"
+        ]);
+
+        return $parada;
     }
     
 

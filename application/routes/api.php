@@ -63,6 +63,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/{parada_id?}', [ParadaController::class, 'findAll']);
         Route::post('', [ParadaController::class, 'create']);
         Route::put('/{parada}', [ParadaController::class, 'update']);
+        Route::patch('/estado/{parada}', [ParadaController::class, 'updateEstado']);
         Route::delete('/{parada}', [ParadaController::class, 'delete']);
     });
 
@@ -72,7 +73,6 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('', [ItemController::class, 'create']);
         Route::put('{item}', [ItemController::class, 'update']);
         Route::patch('/estado/{item}', [ItemController::class, 'updateEstado']);
-       
     });
 
     // comprobantes items

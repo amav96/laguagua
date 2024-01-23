@@ -72,7 +72,24 @@ class ParadaController extends Controller
         }
 
         return response()->json([
-            "parada" =>$actualizarParada
+            "parada" => $actualizarParada
+        ]);
+    }
+
+    public function updateEstado(Parada $parada, SaveParadaRequest $request){
+        try {
+
+            $riderId = $request->rider_id;
+            $this->validarParadaPerteneceUsuario($riderId, $parada->id);
+
+            $actualizarParada = $this->paradaService->updateEstado($request->validated(), $parada);
+
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(), $e->getInternalCode() === AppErrors::PARADA_NO_PERTECE_USUARIO_CODE ? 404 : 400);
+        }
+
+        return response()->json([
+            "parada" => $actualizarParada
         ]);
     }
 
