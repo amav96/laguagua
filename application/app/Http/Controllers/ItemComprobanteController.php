@@ -6,6 +6,7 @@ use App\Exceptions\BussinessException;
 use App\Http\Requests\Item\SaveItemComprobanteRequest;
 use App\Http\Services\Item\ItemComprobanteService;
 use App\Models\ItemComprobante;
+use Illuminate\Http\Request;
 
 class ItemComprobanteController extends Controller
 {
@@ -29,6 +30,18 @@ class ItemComprobanteController extends Controller
 
         return response()->json($comprobante);
         
+    }
+
+    public function delete(ItemComprobante $itemComprobante){
+
+        try {
+            $eliminar = $this->itemComprobanteService->delete($itemComprobante);
+            
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(),  400);
+        }  
+
+        return response()->json(["id" => $eliminar->id]);
     }
 
     public function updateComprobante(ItemComprobante $itemComprobante,  SaveItemComprobanteRequest $request){

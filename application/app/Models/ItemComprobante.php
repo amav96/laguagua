@@ -13,7 +13,7 @@ class ItemComprobante extends Model
      * Table name.
      * @var string.
      */
-    protected $table = 'comprobantes_items';
+    protected $table = 'items_comprobantes';
 
     /**
      * Table primary key.

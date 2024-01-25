@@ -31,7 +31,6 @@ class ParadaController extends Controller
     
             if(isset($request["parada_id"])){
                 $this->validarParadaPerteneceUsuario($usuario->id, $parametros["parada_id"]);
-
             } 
 
             $paradas = $this->paradaService->findAll($parametros, userId: $usuario->id , permisos: []);

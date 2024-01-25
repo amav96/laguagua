@@ -10,6 +10,7 @@ use App\Http\Controllers\ParadaEstadoController;
 use App\Http\Controllers\RecorridoEstadoController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ItemTipoController;
+use App\Http\Controllers\ParadaComprobanteController;
 use App\Http\Controllers\ParadaController;
 use App\Http\Controllers\ProveedorItemController;
 use App\Http\Controllers\RecorridoController;
@@ -67,6 +68,12 @@ Route::middleware(['auth:api'])->group(function () {
         Route::delete('/{parada}', [ParadaController::class, 'delete']);
     });
 
+    // comprobantes items
+    Route::prefix('paradas-comprobantes')->group(function () {
+        Route::post('/url-temporaria', [ParadaComprobanteController::class, 'generarUrlTemporaria']);
+        Route::delete('/delete/{paradaComprobante}', [ParadaComprobanteController::class, 'delete']);
+    });
+
     // Items
     Route::prefix('items')->group(function () {
         Route::get('/{item_id?}', [ItemController::class, 'findAll']);
@@ -76,9 +83,10 @@ Route::middleware(['auth:api'])->group(function () {
     });
 
     // comprobantes items
-    Route::prefix('comprobantes-items')->group(function () {
+    Route::prefix('items-comprobantes')->group(function () {
         Route::post('/url-temporaria', [ItemComprobanteController::class, 'generarUrlTemporaria']);
-        Route::patch('/url-temporaria/{ItemComprobante}', [ItemComprobanteController::class, 'updateComprobante']);
+        Route::patch('/url-temporaria/{itemComprobante}', [ItemComprobanteController::class, 'updateComprobante']);
+        Route::delete('/delete/{itemComprobante}', [ItemComprobanteController::class, 'delete']);
     });
 
     // Clientes

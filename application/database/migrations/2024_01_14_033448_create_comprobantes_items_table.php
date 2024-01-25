@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comprobantes_items', function (Blueprint $table) {
+        Schema::create('items_comprobantes', function (Blueprint $table) {
             $table->id();
 
             $table->string("path")->nullable();
@@ -40,6 +40,6 @@ return new class extends Migration
             $table->dropForeign(['usuario_id']);
         });
 
-        Schema::dropIfExists('comprobantes_items');
+        Schema::dropIfExists('items_comprobantes');
     }
 };

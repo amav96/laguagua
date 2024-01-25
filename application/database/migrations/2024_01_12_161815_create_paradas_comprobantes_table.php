@@ -19,6 +19,9 @@ return new class extends Migration
             $table->unsignedBigInteger('parada_id')->nullable();
             $table->foreign('parada_id')->references('id')->on('paradas');
 
+            $table->unsignedBigInteger('usuario_id');
+            $table->foreign('usuario_id')->references('id')->on('usuarios');
+
             $table->timestamps();
         });
     }
@@ -31,6 +34,10 @@ return new class extends Migration
 
         Schema::table('paradas', function (Blueprint $table) {
             $table->dropForeign(['parada_id']);
+        });
+
+        Schema::table('usuarios', function (Blueprint $table) {
+            $table->dropForeign(['usuario_id']);
         });
 
         Schema::dropIfExists('paradas_comprobantes');

@@ -15,13 +15,16 @@ class ItemComprobanteService {
         beginTransaction();
         try {
 
+            $path = 'items-comprobantes/'.$request["nombre_archivo"];
+
             $storage = Storage::temporaryUploadUrl(
-                $request["nombre_archivo"], now()->addMinutes(5)
+                $path, now()->addMinutes(180)
             );
             
             $comprobante = ItemComprobante::create([
                 "item_id"       => $request["item_id"],
-                "usuario_id"    => $usuarioId
+                "usuario_id"    => $usuarioId,
+                "path"          => $path
             ]);
 
 
@@ -37,6 +40,18 @@ class ItemComprobanteService {
             "comprobante" => $comprobante,
             "storage" => $storage
         ];
+    }
+
+    public function delete (ItemComprobante $itemComprobante){
+       try {
+
+            $eliminar = $itemComprobante->delete();
+           
+       } catch (\Throwable $th) {
+            throw new BussinessException(AppErrors::COMPROBANTE_ITEM_CREAR_ERROR_MESSAGE, AppErrors::COMPROBANTE_ITEM_CREAR_ERROR_CODE);
+       }
+
+       return $itemComprobante;
     }
 
     public function updateComprobante(ItemComprobante $itemComprobante, array $request) :ItemComprobante {
