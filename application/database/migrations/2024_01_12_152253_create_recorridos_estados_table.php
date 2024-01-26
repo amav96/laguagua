@@ -14,21 +14,34 @@ return new class extends Migration
     {
         Schema::create('recorridos_estados', function (Blueprint $table) {
             $table->id();
+
             $table->string('nombre');
+
+            $table->string('codigo');
+
+            $table->string('color')->nullable();
         });
 
         RecorridoEstado::insert([
             [
-                "nombre" => "preparado",
+                "nombre" => "Preparado",
+                "codigo" => "preparado",
+                "color"  => "#ffff52",
             ],
             [
-                "nombre" => "iniciado",
+                "nombre" => "Iniciado",
+                "codigo" => "iniciado",
+                "color"  => "#448aff",
             ],
             [
-                "nombre" => "finalizado",
+                "nombre" => "Finalizado",
+                "codigo" => "finalizado",
+                "color"  => "#00c853",
             ],
             [
-                "nombre" => "cancelado",
+                "nombre" => "Cancelado",
+                "codigo" => "cancelado",
+                "color"  => "#F31B1B",
             ]
         ]);
     }

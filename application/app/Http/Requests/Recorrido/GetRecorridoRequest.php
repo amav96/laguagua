@@ -27,7 +27,7 @@ class GetRecorridoRequest extends FormRequest
     {
         $rules = [
             "inicio"    => "nullable|string",
-            "rider_id"  => "nullable|integer|usuarios,id",
+            "rider_id"  => "nullable|integer|exists:usuarios,id",
         ];
 
         return $rules;

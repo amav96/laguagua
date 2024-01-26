@@ -42,7 +42,7 @@ class RecorridoService {
                 });
 
         if(isset($parametros["page"])){
-            $query = $query->paginate();
+            $query = $query->paginate(3);
         } else {
             $query = $query->get();
         }
@@ -280,6 +280,9 @@ class RecorridoService {
         try {
 
             $recorrido->recorrido_estado_id = $request["recorrido_estado_id"];
+            if($request["recorrido_estado_id"] === RecorridoEstado::FINALIZADO){
+                $recorrido->finalizado = now();
+            }
             $recorrido->save();
 
         } catch (\Throwable $th) {
