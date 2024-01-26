@@ -2,15 +2,13 @@
 
 namespace App\Http\Requests\Recorrido;
 
-use App\Exceptions\AppErrors;
 use App\Traits\RequestValidationHandler;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
-class SaveOrigenRequest extends FormRequest
+class UpdateOrigenActualRequest extends FormRequest
 {
     use RequestValidationHandler;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -26,13 +24,10 @@ class SaveOrigenRequest extends FormRequest
      */
     public function rules(): array
     {
-       
         return [
-            "origen_lat"        => "required|numeric",
-            "origen_lng"        => "required|numeric",
-            "origen_formateado" => "required|string",
-            "origen_auto"       => "required|integer"
+            "origen_actual_lat" => "required|numeric",
+            "origen_actual_lng" => "required|numeric",
+            "origen_actual_formateado" => "required|string",
         ];
     }
-
 }

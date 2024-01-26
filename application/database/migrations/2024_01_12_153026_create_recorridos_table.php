@@ -40,8 +40,22 @@ return new class extends Migration
 
             $table->string("destino_formateado")->nullable();
 
+            $table->double("origen_actual_lat")->nullable();
+
+            $table->double("origen_actual_lng")->nullable();
+
+            $table->double("origen_actual_formateado")->nullable();
+
+            $table->integer("origen_auto")->default(0);
+            
             $table->integer("optimizado")->default(0);
 
+            $table->string("distancia")->nullable();
+
+            $table->string("duracion")->nullable();
+
+            $table->longText("polyline")->nullable();
+            
             $table->unsignedBigInteger('empresa_id')->nullable();
             $table->foreign('empresa_id')->references('id')->on('empresas');
 

@@ -52,11 +52,12 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/{recorrido_id?}', [RecorridoController::class, 'findAll']);
         Route::post('', [RecorridoController::class, 'create']);
         Route::patch('origen/{recorrido}', [RecorridoController::class, 'updateOrigen']);
+        Route::patch('origen-actual/{recorrido}', [RecorridoController::class, 'updateOrigenActual']);
         Route::patch('origen-remover/{recorrido}', [RecorridoController::class, 'removeOrigen']);
         Route::patch('destino/{recorrido}', [RecorridoController::class, 'updateDestino']);
         Route::patch('destino-remover/{recorrido}', [RecorridoController::class, 'removeDestino']);
-
         Route::patch('/{recorrido}/estado', [RecorridoController::class, 'updateEstado']);
+        Route::post('optimizar', [RecorridoController::class, 'optimizar']);
     });
 
     // Paradas
@@ -116,4 +117,4 @@ Route::middleware(['auth:api'])->group(function () {
 });
 
 
-Route::post('armar-recorrido', [RecorridoController::class, 'armarRecorrido']);
+

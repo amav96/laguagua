@@ -4,7 +4,7 @@ namespace App\Http\Services\Item;
 
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
-
+use App\Http\Services\Parada\ParadaEstadoService;
 use App\Models\ItemEstado;
 use App\Models\ParadaEstado;
 use App\Models\Item;
@@ -102,6 +102,7 @@ class ItemService {
 
         } catch (\Throwable $th) {
             rollBack();
+            
             throw new BussinessException(AppErrors::ITEM_ACTUALIZAR_ERROR_MESSAGE, AppErrors::ITEM_ACTUALIZAR_ERROR_CODE);
         }
 
@@ -158,14 +159,20 @@ class ItemService {
                     $paradaEstadoId = ParadaEstado::RECHAZADO;
                     break;
                 }
+                $actualizar = ["parada_estado_id" =>  $paradaEstadoId];
+
+                $paradaEstadoService = new ParadaEstadoService();
+                if($paradaEstadoService->paradaVisitada($paradaEstadoId)){
+                    $actualizar["realizado_en"] = now();
+                }
              
-                Parada::where("id", $request["parada_id"])->update(["parada_estado_id" =>  $paradaEstadoId]);
+                Parada::where("id", $request["parada_id"])->update($actualizar);
                 
             }
 
         } catch (\Throwable $th) {
             rollBack();
-          
+
             throw new BussinessException(AppErrors::ITEM_ACTUALIZAR_ERROR_MESSAGE, AppErrors::ITEM_ACTUALIZAR_ERROR_CODE);
         }
 

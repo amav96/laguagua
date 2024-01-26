@@ -6,6 +6,7 @@ use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Models\ParadaEstado;
 use App\Models\Parada;
+use App\Models\Recorrido;
 use Illuminate\Database\Eloquent\Builder;
 
 class ParadaService {
@@ -55,9 +56,10 @@ class ParadaService {
                 "paradaEstado"
             ]);
 
+            Recorrido::where("id", $parada->recorrido_id)->update(["optimizado" => 0]);
+
         } catch (\Throwable $th) {
             rollBack();
-            dd($th);
             throw new BussinessException(AppErrors::PARADA_CREAR_ERROR_MESSAGE, AppErrors::PARADA_CREAR_ERROR_CODE);
         }
 
@@ -83,6 +85,8 @@ class ParadaService {
                 "paradaEstado"
             ]);
 
+            Recorrido::where("id", $parada->recorrido_id)->update(["optimizado" => 0]);
+
         } catch (\Throwable $th) {
             rollBack();
             throw new BussinessException(AppErrors::PARADA_ACTUALIZAR_ERROR_MESSAGE, AppErrors::PARADA_ACTUALIZAR_ERROR_CODE);
@@ -96,6 +100,13 @@ class ParadaService {
     public function updateEstado(array $request, Parada $parada){
 
         $parada->parada_estado_id   = $request["parada_estado_id"];
+
+        $paradaEstadoService = new ParadaEstadoService();
+        
+        if($paradaEstadoService->paradaVisitada($request["parada_estado_id"])){
+            $parada->realizado_en = now();
+        }
+
         $parada->save();
 
         $parada->load([

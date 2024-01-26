@@ -144,6 +144,10 @@ return [
         // 'store' => 'redis',
     ],
 
+    'values' => [
+        "GOOGLE_API_KEY" => env("GOOGLE_API_KEY")
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers

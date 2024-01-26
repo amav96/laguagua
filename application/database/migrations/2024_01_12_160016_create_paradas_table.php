@@ -37,6 +37,8 @@ return new class extends Migration
             $table->unsignedBigInteger('rider_id')->nullable();
             $table->foreign('rider_id')->references('id')->on('usuarios');
 
+            $table->integer("orden")->nullable();
+
             $table->softDeletes();
 
             $table->timestamps();

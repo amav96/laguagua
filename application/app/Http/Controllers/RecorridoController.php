@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Http\Requests\Recorrido\GetRecorridoRequest;
+use App\Http\Requests\Recorrido\OptimizarRecorridoRequest;
 use App\Http\Requests\Recorrido\SaveDestinoRequest;
 use App\Http\Requests\Recorrido\SaveOrigenRequest;
 use App\Http\Requests\Recorrido\SaveRecorridoRequest;
 use App\Http\Requests\Recorrido\UpdateEstadoRecorridoRequest;
+use App\Http\Requests\Recorrido\UpdateOrigenActualRequest;
 use App\Http\Services\Empresa\EmpresaService;
 use App\Http\Services\Recorrido\RecorridoService;
 use App\Models\Recorrido;
@@ -92,7 +94,28 @@ class RecorridoController extends Controller
             return response()->json($e->getAppResponse(), $e->getInternalCode() === AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_CODE ? 404 : 400);
         }
 
-        return response()->json(["recorrido" => $origen->only(["id", "origen_lat", "origen_lng", "origen_formateado"])]);
+        return response()->json(["recorrido" => $origen->only(["id", "origen_lat", "origen_lng", "origen_formateado","origen_auto"])]);
+
+    }
+
+    public function updateOrigenActual(Recorrido $recorrido, UpdateOrigenActualRequest $request){
+
+        $usuario = $request->user();
+
+        try {
+            
+            if(!$this->recorridoService->perteneceUsuario($usuario->id, $recorrido->id)){
+                throw new BussinessException(AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_MESSAGE, AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_CODE);
+            }
+
+            $origen = $this->recorridoService->updateOrigenActual($request->all(), $recorrido->id);
+
+
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(), $e->getInternalCode() === AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_CODE ? 404 : 400);
+        }
+
+        return response()->json(["recorrido" => $origen->only(["id", "origen_lat", "origen_lng", "origen_formateado","origen_auto"])]);
 
     }
 
@@ -177,10 +200,10 @@ class RecorridoController extends Controller
         return $recorridoEstado;
     }
 
-    public function armarRecorrido(SaveRecorridoRequest $request){
-       
-        $recorrido = $this->recorridoService->obtenerRecorrido($request->all());
+    public function optimizar(OptimizarRecorridoRequest $request){
+        
+        [$recorrido, $distancia, $duracion, $polyline ] = $this->recorridoService->optimizar($request->all());
 
-        return response()->json(['recorrido' => $recorrido], 200);
+        return response()->json(compact('recorrido', 'distancia', 'duracion', 'polyline'), 200);
     }
 }
