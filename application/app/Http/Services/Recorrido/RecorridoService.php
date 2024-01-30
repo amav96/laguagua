@@ -10,7 +10,7 @@ use App\Models\RecorridoEstado;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use PDF;
 
 class RecorridoService {
 
@@ -42,7 +42,7 @@ class RecorridoService {
                 });
 
         if(isset($parametros["page"])){
-            $query = $query->paginate(3);
+            $query = $query->paginate();
         } else {
             $query = $query->get();
         }

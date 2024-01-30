@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
+use App\Http\Requests\Recorrido\GenerarInformeRecorridoRequest;
 use App\Http\Requests\Recorrido\GetRecorridoRequest;
 use App\Http\Requests\Recorrido\OptimizarRecorridoRequest;
 use App\Http\Requests\Recorrido\SaveDestinoRequest;
@@ -206,4 +207,5 @@ class RecorridoController extends Controller
 
         return response()->json(compact('recorrido', 'distancia', 'duracion', 'polyline'), 200);
     }
+
 }

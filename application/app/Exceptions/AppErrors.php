@@ -25,6 +25,7 @@ class AppErrors
     const USUARIO_NO_TE_PERTENECE_MESSAGE = "User dont belong to you";
 
     
+    
 
     // Empresa service
 

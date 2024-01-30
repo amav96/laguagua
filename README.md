@@ -1,1 +1,5 @@
 # laguagua
+
+## produccion
+
+instalar snappy
