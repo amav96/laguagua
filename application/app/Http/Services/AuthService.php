@@ -38,6 +38,7 @@ class AuthService {
             
         } catch(Exception $e) {
             DB::rollback();
+            dd($e);
             throw new BussinessException(AppErrors::ERROR_REGISTRO_MESSAGE, AppErrors::ERROR_REGISTRO_CODE);
         }
 
