@@ -39,10 +39,20 @@ class RecorridoService {
                 })
                 ->when(count($permisos) === 0, function (Builder $q) use($parametros, $usuarioAutenticadoId) : void {
                     $q->where('rider_id', $usuarioAutenticadoId); 
-                });
+                })
+                ->orderBy('inicio', 'DESC');
 
         if(isset($parametros["page"])){
             $query = $query->paginate();
+            // TODO: configurar timezone en usuario configuracones
+            $timeZoneFront = "America/Argentina/Buenos_Aires";
+            $items = $query->getCollection()->map(function ($item) use ($timeZoneFront) {
+                $item->inicio = Carbon::parse($item->inicio)->setTimezone($timeZoneFront)->format('d-m-y H:i:s');
+                return $item;
+            });
+            
+            // Actualizar la colección de la paginación con los items modificados
+            $query->setCollection($items);
         } else {
             $query = $query->get();
         }
