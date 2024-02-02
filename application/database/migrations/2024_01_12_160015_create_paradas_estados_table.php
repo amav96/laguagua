@@ -30,19 +30,19 @@ return new class extends Migration
                 "nombre" => "Preparado",
                 "codigo" => "preparado",
                 "color"  => "",
-                "tipo"   => "postivo",
+                "tipo"   => "positivo",
             ],
             [
                 "nombre" => "En camino",
                 "codigo" => "en-camino",
                 "color"  => "#448aff",
-                "tipo"   => "postivo",
+                "tipo"   => "positivo",
             ],
             [
                 "nombre" => "Visitado",
                 "codigo" => "visitado",
                 "color"  => "#00c853",
-                "tipo"   => "postivo",
+                "tipo"   => "positivo",
             ],
             [
                 "nombre" => "Cancelado",

@@ -5,6 +5,7 @@ namespace App\Http\Services\Item;
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Http\Services\Parada\ParadaEstadoService;
+use App\Http\Services\Parada\ParadaService;
 use App\Models\ItemEstado;
 use App\Models\ParadaEstado;
 use App\Models\Item;
@@ -128,6 +129,11 @@ class ItemService {
             ]);
             
             if(isset($request["parada_id"])){
+                $paradaService = new ParadaService();
+                // $data = [
+                    
+                // ];
+                // $paradaService->updateEstado();
 
                 $paradaEstadoId = null;
                 switch($itemActualizado->itemEstado->codigo){

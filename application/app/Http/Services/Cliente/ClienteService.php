@@ -53,7 +53,7 @@ class ClienteService {
 
             $cliente = Cliente::create($clienteData);
 
-            if($request["clientes_numeros"]){
+            if(isset($request["clientes_numeros"])){
                 foreach($request["clientes_numeros"] as $contacto){
                     ClienteNumero::create([
                         "cliente_id"        => $cliente->id,

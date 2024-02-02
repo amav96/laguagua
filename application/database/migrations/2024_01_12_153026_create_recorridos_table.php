@@ -44,7 +44,7 @@ return new class extends Migration
 
             $table->double("origen_actual_lng")->nullable();
 
-            $table->double("origen_actual_formateado")->nullable();
+            $table->string("origen_actual_formateado")->nullable();
 
             $table->integer("origen_auto")->default(0);
             

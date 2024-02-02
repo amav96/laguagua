@@ -78,7 +78,7 @@ class RecorridoService {
     public function updateOrigen(array $request, int $recorridoId) : Recorrido {
 
         try {
-
+            
             $recorrido = Recorrido::find($recorridoId);
             $recorrido->origen_lat = $request["origen_lat"];
             $recorrido->origen_lng = $request["origen_lng"];
@@ -92,6 +92,7 @@ class RecorridoService {
 
 
         } catch (\Throwable $th) {
+           
             throw new BussinessException(AppErrors::RECORRIDO_ACTUALIZAR_ERROR_MESSAGE, AppErrors::RECORRIDO_ACTUALIZAR_ERROR_CODE);
         }
 
