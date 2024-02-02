@@ -129,51 +129,13 @@ class ItemService {
             ]);
             
             if(isset($request["parada_id"])){
-                $paradaService = new ParadaService();
-                // $data = [
-                    
-                // ];
-                // $paradaService->updateEstado();
-
-                $paradaEstadoId = null;
-                switch($itemActualizado->itemEstado->codigo){
-                    case "preparado";
-                    $paradaEstadoId = ParadaEstado::PREPARADO;
-                    break;
-                    case "en-camino";
-                    $paradaEstadoId = ParadaEstado::EN_CAMINO;
-                    break;
-                    case "entregado";
-                    $paradaEstadoId = ParadaEstado::VISITADO;
-                    break;
-                    case "retirado";
-                    $paradaEstadoId = ParadaEstado::VISITADO;
-                    break;
-                    case "cancelado";
-                    $paradaEstadoId = ParadaEstado::CANCELADO;
-                    break;
-                    case "no-responde";
-                    $paradaEstadoId = ParadaEstado::NO_RESPONDE;
-                    break;
-                    case "direccion-incorrecta";
-                    $paradaEstadoId = ParadaEstado::DIRECCION_INCORRECTA;
-                    break;
-                    case "faltan-datos";
-                    $paradaEstadoId = ParadaEstado::FALTAN_DATOS;
-                    break;
-                    case "rechazado";
-                    $paradaEstadoId = ParadaEstado::RECHAZADO;
-                    break;
-                }
-                $actualizar = ["parada_estado_id" =>  $paradaEstadoId];
-
-                $paradaEstadoService = new ParadaEstadoService();
-                if($paradaEstadoService->paradaVisitada($paradaEstadoId)){
-                    $actualizar["realizado_en"] = now();
-                }
-             
-                Parada::where("id", $request["parada_id"])->update($actualizar);
                 
+                $paradaService = new ParadaService();
+                $data = [
+                    "parada_estado_id" => $paradaService->obtenerEstadoParadaConEstadoItem($itemActualizado->itemEstado->codigo),
+                ];
+                $paradaService->updateEstado($data, Parada::find($request["parada_id"]));
+
             }
 
         } catch (\Throwable $th) {
