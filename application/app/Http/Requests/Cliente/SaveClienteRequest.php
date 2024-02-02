@@ -48,7 +48,8 @@ class SaveClienteRequest extends FormRequest
                 "max_digits:100"
             ],
             "nombre"                => "nullable|string",
-            "empresa_id"            => "required|integer|exists:empresas,id"
+            "empresa_id"            => "required|integer|exists:empresas,id",
+            
         ];
 
 

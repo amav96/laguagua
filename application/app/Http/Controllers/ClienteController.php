@@ -36,8 +36,6 @@ class ClienteController extends Controller
 
         try {
 
-            $this->validateDocumento($request->all());
-
             $usuario = $request->user();
 
             $cliente = $this->clienteService->create($request->all(), $usuario->id);
@@ -53,7 +51,6 @@ class ClienteController extends Controller
 
         try {
             $usuario = $request->user();
-            $this->validateActualizarDocumento($request->all(), $cliente);
             $this->validarQuienActualiza($cliente, $usuario->id);
            
             $cliente = $this->clienteService->update($cliente, $request->all());
@@ -64,24 +61,6 @@ class ClienteController extends Controller
         
         return response()->json($cliente);
 
-    }
-
-    private function validateDocumento(array $request){
-        if(isset($request["numero_documento"])){
-            if(Cliente::where("tipo_documento_id", $request["tipo_documento_id"])->where("numero_documento", $request["numero_documento"])->exists()){
-                throw new BussinessException(AppErrors::CLIENTE_EXISTENTE_MESSAGE, AppErrors::CLIENTE_EXISTENTE_CODE);
-            }
-        }
-    }
-
-    private function validateActualizarDocumento(array $request, Cliente $cliente){
-
-        if(isset($request["numero_documento"]) && $request["numero_documento"] !== $cliente->numero_documento || $request["tipo_documento_id"] !== $cliente->tipo_documento_id){
-            if(Cliente::where("tipo_documento_id", $request["tipo_documento_id"])->where("numero_documento", $request["numero_documento"])->exists()){
-                throw new BussinessException(AppErrors::CLIENTE_EXISTENTE_MESSAGE, AppErrors::CLIENTE_EXISTENTE_CODE);
-            }
-        }
-        
     }
 
     private function validarQuienActualiza(Cliente $cliente, int $usuarioId){
