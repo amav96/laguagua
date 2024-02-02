@@ -88,7 +88,7 @@ class ClienteService {
             $cliente->save();
 
            
-            if ($request["clientes_numeros"]) {
+            if (isset($request["clientes_numeros"])) {
                 foreach ($request["clientes_numeros"] as $contacto) {
                     if (isset($contacto["id"])) {
                         // Si hay un ID, actualiza el registro existente
