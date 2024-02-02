@@ -40,7 +40,7 @@ return new class extends Migration
             [
                 "nombre"    => "Entregado",
                 "codigo"    => "entregado",
-                "color"     => "#53F31B",
+                "color"     => "#00c853",
                 "tipo"      => "positivo"
             ],
             [
