@@ -59,6 +59,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::patch('destino-remover/{recorrido}', [RecorridoController::class, 'removeDestino']);
         Route::patch('/{recorrido}/estado', [RecorridoController::class, 'updateEstado']);
         Route::post('optimizar', [RecorridoController::class, 'optimizar']);
+
+        Route::post('/detectar-propiedades', [RecorridoController::class, 'detectarPropiedades']);
     });
 
     // Paradas
@@ -116,6 +118,4 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('codigos-area', [CodigoAreaController::class, 'findAll']);
 
 });
-
-
 

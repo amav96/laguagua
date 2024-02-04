@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.1",
         "barryvdh/laravel-snappy": "^1.0",
+        "google/cloud-vision": "^1.8",
         "guzzlehttp/guzzle": "^7.2",
         "h4cc/wkhtmltoimage-amd64": "0.12.x",
         "laravel/framework": "^10.10",

@@ -10,7 +10,6 @@ use App\Http\Services\Parada\ParadaService;
 use App\Models\Item;
 use Illuminate\Http\Request;
 
-
 class ItemController extends Controller
 {
     public function __construct(
@@ -107,5 +106,4 @@ class ItemController extends Controller
             throw new BussinessException(AppErrors::ITEM_NO_PERTECE_USUARIO_MESSAGE, AppErrors::ITEM_NO_PERTECE_USUARIO_CODE);
         }
     }
-
 }

@@ -16,6 +16,9 @@ use App\Http\Services\Empresa\EmpresaService;
 use App\Http\Services\Recorrido\RecorridoService;
 use App\Models\Recorrido;
 use Illuminate\Http\Request;
+use Google\Cloud\Vision\V1\Feature\Type;
+use Google\Cloud\Vision\V1\ImageAnnotatorClient;
+use Google\Cloud\Vision\V1\Likelihood;
 
 class RecorridoController extends Controller
 {
@@ -206,6 +209,64 @@ class RecorridoController extends Controller
         [$recorrido, $distancia, $duracion, $polyline ] = $this->recorridoService->optimizar($request->all());
 
         return response()->json(compact('recorrido', 'distancia', 'duracion', 'polyline'), 200);
+    }
+
+    public function detectarPropiedades(Request $request) {
+        try {
+            $imageAnnotatorClient = new ImageAnnotatorClient([
+                'credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
+                'projectId' => env('GOOGLE_CLOUD_PROJECT'),
+            ]);
+    
+            $imageContent = file_get_contents($request->file->getPathName());
+            $response = $imageAnnotatorClient->textDetection($imageContent);
+        
+            // Verifica si hay alguna anotación de texto
+            if ($response->getTextAnnotations()) {
+                // Obtiene la primera anotación de texto (puedes ajustar esto según tus necesidades)
+                $textAnnotation = $response->getTextAnnotations()[0];
+    
+                // Accede al contenido del texto
+                $textContent = $textAnnotation->getDescription();
+                
+                // Define patrones de expresiones regulares para cada propiedad que deseas extraer
+                $patterns = [
+                    'direccion' => '/Direccion:\s*(.*?)\n/',
+                    'destinatario' => '/Destinatario:\s*(.*?)\n/',
+                    'telefono' => '/Teléfono:\s*(.*?)\n/',
+                    'dni' => '/DNI:\s*(\d+)/',
+                    'enviar_a' => '/Enviar a:\s*(.*?)\n/',
+                    'envio' => '/Envio:\s*(.*?)\n/',
+                    'notas_del_cliente' => '/Notas del cliente:\s*(.*?)\n/',
+                    'referencia' => '/Referencia:\s*(.*?)\n/',
+                ];
+
+    
+                // Inicializa el array de resultados
+                $result = [];
+    
+                // Busca cada propiedad en el texto utilizando las expresiones regulares
+                foreach ($patterns as $label => $pattern) {
+                    
+                    if ($label === 'direccion' && isset($patterns['dni'])) {
+                        
+                        // Si ya encontramos el dni, busca la dirección debajo del dni
+                        $dniPattern = '/DNI:\s*\d+\n(.*?)\n/';
+                        if (preg_match($dniPattern, $textContent, $dniMatches)) {
+                            $result['direccion'] = $dniMatches[1];
+                        }
+                    } elseif (preg_match($pattern, $textContent, $matches)) {
+                        $result[$label] = $matches[1];
+                    }
+                }
+    
+                $imageAnnotatorClient->close();
+    
+                return response()->json(["propiedades" => $result]);
+            }
+        } catch (\Throwable $th) {
+            echo $th->getMessage();
+        }
     }
 
 }
