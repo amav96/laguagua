@@ -239,7 +239,7 @@ class RecorridoController extends Controller
                     'enviar_a' => '/Enviar a:\s*(.*?)\n/',
                     'envio' => '/Envio:\s*(.*?)\n/',
                     'notas_del_cliente' => '/Notas del cliente:\s*(.*?)\n/',
-                    'referencia' => '/Referencia:\s*(.*?)\n/',
+                    'observaciones' => '/Referencia:\s*(.*?)\n/',
                 ];
 
     
@@ -260,6 +260,14 @@ class RecorridoController extends Controller
                         $result['direccion'] = $dniMatches[1];
                     }
                 } 
+
+                if(isset($result['enviar_a'])){
+                    $result['destinatario'] = $result['enviar_a'];
+                }
+
+                if(isset($result['notas_del_cliente'])){
+                    $result['observaciones'] = $result['notas_del_cliente'];
+                }
     
                 $imageAnnotatorClient->close();
     

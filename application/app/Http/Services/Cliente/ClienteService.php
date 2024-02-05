@@ -80,9 +80,9 @@ class ClienteService {
         try {
             
             $cliente->fill([
-                'tipo_documento_id' => $request['tipo_documento_id'] ?? $cliente->tipo_documento_id,
-                'numero_documento'  => $request['numero_documento'] ?? $cliente->numero_documento,
-                'nombre'            => $request['nombre'] ?? $cliente->nombre,
+                "tipo_documento_id" => $request["tipo_documento_id"] ?? $cliente->tipo_documento_id,
+                "numero_documento"  => $request["numero_documento"] ?? $cliente->numero_documento,
+                "nombre"            => $request["nombre"] ?? $cliente->nombre,
                 "observaciones"     => $request["observaciones"] ?? $cliente->observaciones,
                 "empresa_id"        => $request["empresa_id"] ?? null,
             ]);
