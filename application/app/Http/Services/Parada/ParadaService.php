@@ -50,6 +50,7 @@ class ParadaService {
             $parada->provincia              = $request["provincia"] ?? '';
             $parada->rider_id               = $request["rider_id"];
             $parada->parada_estado_id       = ParadaEstado::PREPARADO;
+            $parada->tipo_domicilio         = $request["tipo_domicilio"] ?? null;
 
             $parada->save();
             $parada->load([
@@ -79,6 +80,7 @@ class ParadaService {
             $parada->codigo_postal          = $request["codigo_postal"];
             $parada->localidad              = $request["localidad"];
             $parada->provincia              = $request["provincia"];
+           
 
             $parada->save();
             $parada->load([

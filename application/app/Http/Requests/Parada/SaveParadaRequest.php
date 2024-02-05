@@ -86,7 +86,8 @@ class SaveParadaRequest extends FormRequest
                         $fail(true);
                     }
                 }
-            ]
+            ],
+            "tipo_domicilio" => ["nullable", "string"]
         ];
 
         $this->agregarValidacionRecorrido($rules);

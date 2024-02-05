@@ -29,6 +29,8 @@ return new class extends Migration
 
             $table->string("provincia");
 
+            $table->string("tipo_domicilio")->nullable();;
+
             $table->unsignedBigInteger('parada_estado_id')->nullable();
             $table->foreign('parada_estado_id')->references('id')->on('paradas_estados');
 
