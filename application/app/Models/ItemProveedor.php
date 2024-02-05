@@ -9,6 +9,9 @@ class ItemProveedor extends Model
 {
     use HasFactory;
 
+    const MERCADO_LIBRE = 1;
+    const INDEPENDIENTE = 2;
+
      /**
      * Table name.
      * @var string.

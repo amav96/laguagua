@@ -9,6 +9,8 @@ class TipoDocumento extends Model
 {
     use HasFactory;
 
+    const DNI = 1;
+
     public $timestamps = false;
 
      /**

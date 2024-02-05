@@ -15,7 +15,12 @@ use App\Http\Requests\Recorrido\UpdateEstadoRecorridoRequest;
 use App\Http\Requests\Recorrido\UpdateOrigenActualRequest;
 use App\Http\Services\Empresa\EmpresaService;
 use App\Http\Services\Recorrido\RecorridoService;
+use App\Models\CodigoArea;
+use App\Models\ItemEstado;
+use App\Models\ItemProveedor;
+use App\Models\ItemTipo;
 use App\Models\Recorrido;
+use App\Models\TipoDocumento;
 use Illuminate\Http\Request;
 use Google\Cloud\Vision\V1\Feature\Type;
 use Google\Cloud\Vision\V1\ImageAnnotatorClient;
@@ -213,7 +218,7 @@ class RecorridoController extends Controller
     }
 
     public function detectarPropiedades(DetectarPropiedadesRequest $request) {
-        
+
         try {
             $imageAnnotatorClient = new ImageAnnotatorClient([
                 'credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
@@ -229,46 +234,100 @@ class RecorridoController extends Controller
     
                 // Accede al contenido del texto
                 $textContent = $textAnnotation->getDescription();
-                
+               
                 // Define patrones de expresiones regulares para cada propiedad que deseas extraer
                 $patterns = [
                     'direccion' => '/Direccion:\s*(.*?)\n/',
-                    'destinatario' => '/Destinatario:\s*(.*?)\n/',
-                    'telefono' => '/Teléfono:\s*(.*?)\n/',
-                    'dni' => '/DNI:\s*(\d+)/',
+                    'nombre' => '/Destinatario:\s*(.*?)\n/',
+                    'numero_telefono' => '/Teléfono:\s*(.*?)\n/',
+                    'numero_documento' => '/DNI:\s*(\d+)/',
                     'enviar_a' => '/Enviar a:\s*(.*?)\n/',
-                    'envio' => '/Envio:\s*(.*?)\n/',
+                    'track_id' => '/Envio:\s*(.*?)\n/',
                     'notas_del_cliente' => '/Notas del cliente:\s*(.*?)\n/',
                     'observaciones' => '/Referencia:\s*(.*?)\n/',
+                    'envio_flex' => '/\bEnvío Flex\b/i',
+                    'residencial' => '/\bRESIDENCIAL\b/i',
+                    'comercial' => '/\COMERCIAL\b/i',
                 ];
 
     
                 // Inicializa el array de resultados
-                $result = [];
+                $result = [
+                    'direccion' => null,
+                    'nombre' => null,
+                    'numero_documento' => null,
+                    'track_id' => null,
+                    'observaciones' => null,
+                    'tipo_documento_id' => null,
+                    'item_proveedor_id' => null,
+                    'tipo_domicilio' => null,
+                    'item_tipo_id' => null,
+                    'item_estado_id' => null,
+                    'numero_telefono' => null,
+                    'codigo_area_id'   => null
+                ];
     
                 // Busca cada propiedad en el texto utilizando las expresiones regulares
                 foreach ($patterns as $label => $pattern) {
                    if (preg_match($pattern, $textContent, $matches)) {
-                        $result[$label] = $matches[1];
+                        $result[$label] = count($matches) > 1 ? $matches[1] : $matches[0];
                     }
                 }
 
-                if (isset($result['dni'])) {
+                if (isset($result['numero_documento'])) {
                     //Si ya encontramos el dni, busca la dirección debajo del dni
                     $dniPattern = '/DNI:\s*\d+\n(.*?)\n/';
-                    if (preg_match($dniPattern, $textContent, $dniMatches)) {
+                    if (preg_match($dniPattern, $textContent, $dniMatches) && count($dniMatches) > 1) {
                         $result['direccion'] = $dniMatches[1];
                     }
+                    $result['tipo_documento_id'] = TipoDocumento::DNI;
                 } 
 
                 if(isset($result['enviar_a'])){
-                    $result['destinatario'] = $result['enviar_a'];
+                    $result['nombre'] = $result['enviar_a'];
+                    unset($result['enviar_a']);
                 }
 
                 if(isset($result['notas_del_cliente'])){
                     $result['observaciones'] = $result['notas_del_cliente'];
+                    unset($result['notas_del_cliente']);
                 }
-    
+
+                if(isset($result['envio_flex'])){
+                    $result['item_proveedor_id'] = ItemProveedor::MERCADO_LIBRE;
+                    unset($result['envio_flex']);
+                } else {
+                    $result['item_proveedor_id'] = ItemProveedor::INDEPENDIENTE;
+                }
+
+                if(isset($result['residencial'])){
+                    $result['tipo_domicilio'] = $result['residencial'];
+                    unset($result['residencial']);
+                }
+
+                if(isset($result['comercial'])){
+                    $result['tipo_domicilio'] = $result['comercial'];
+                    unset($result['comercial']);
+                }
+
+                $result['item_tipo_id'] = ItemTipo::ENTREGA;
+                $result['item_estado_id'] = ItemEstado::PREPARADO;
+
+                if(isset($result["numero_telefono"])){
+                    $codigosArea = CodigoArea::get();
+                    $numero_telefono = trim($result["numero_telefono"]);
+                    foreach($codigosArea as $area){
+                        $partir = explode($area->codigo, $numero_telefono);
+                        if($partir && count($partir) > 1){
+                            $result["codigo_area_id"] = $area->id;
+                            $result["numero_telefono"] = $partir[1];
+                            break;
+                        }
+                    }
+                }
+
+                $result = array_filter($result);
+              
                 $imageAnnotatorClient->close();
     
                 return response()->json(["propiedades" => $result]);
@@ -277,5 +336,4 @@ class RecorridoController extends Controller
             return response()->json($th->getMessage(), 400);
         }
     }
-
 }
