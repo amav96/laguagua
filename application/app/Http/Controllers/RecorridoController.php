@@ -213,13 +213,11 @@ class RecorridoController extends Controller
 
     public function detectarPropiedades(Request $request) {
         try {
-           
             $imageAnnotatorClient = new ImageAnnotatorClient([
                 'credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
               
             ]);
-            
-    
+        
             $imageContent = file_get_contents($request->file->getPathName());
             $response = $imageAnnotatorClient->textDetection($imageContent);
         
@@ -267,7 +265,7 @@ class RecorridoController extends Controller
                 return response()->json(["propiedades" => $result]);
             }
         } catch (\Throwable $th) {
-            echo $th->getMessage();
+            return response()->json($th->getMessage());
         }
     }
 
