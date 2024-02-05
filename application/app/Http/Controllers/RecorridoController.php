@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
+use App\Http\Requests\Recorrido\DetectarPropiedadesRequest;
 use App\Http\Requests\Recorrido\GenerarInformeRecorridoRequest;
 use App\Http\Requests\Recorrido\GetRecorridoRequest;
 use App\Http\Requests\Recorrido\OptimizarRecorridoRequest;
@@ -211,7 +212,7 @@ class RecorridoController extends Controller
         return response()->json(compact('recorrido', 'distancia', 'duracion', 'polyline'), 200);
     }
 
-    public function detectarPropiedades(Request $request) {
+    public function detectarPropiedades(DetectarPropiedadesRequest $request) {
         try {
             $imageAnnotatorClient = new ImageAnnotatorClient([
                 'credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
