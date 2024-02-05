@@ -265,7 +265,7 @@ class RecorridoController extends Controller
                 return response()->json(["propiedades" => $result]);
             }
         } catch (\Throwable $th) {
-            return response()->json($th->getMessage());
+            return response()->json($th->getMessage(), 400);
         }
     }
 
