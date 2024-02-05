@@ -27,6 +27,7 @@ class SaveClienteRequest extends FormRequest
         $rules = [
             "tipo_documento_id"     => "required|integer|max_digits:1|exists:tipos_documentos,id",
             "numero_documento"      => "nullable|string|max:30",
+            "observaciones"         => "nullable|string",
             "clientes_numeros" => [
                 "nullable",
                 "array",

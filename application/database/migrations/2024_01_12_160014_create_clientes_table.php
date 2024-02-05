@@ -28,6 +28,8 @@ return new class extends Migration
 
             $table->string('numero_fijo')->nullable();
 
+            $table->longText('observaciones')->nullable();
+
             $table->unsignedBigInteger('empresa_id');
             $table->foreign('empresa_id')->references('id')->on('empresas');
 
@@ -41,6 +43,8 @@ return new class extends Migration
             $table->index(['numero_documento']);
             
             $table->index(['nombre']);
+
+
         });
     }
 

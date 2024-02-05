@@ -213,10 +213,10 @@ class RecorridoController extends Controller
     }
 
     public function detectarPropiedades(DetectarPropiedadesRequest $request) {
+        
         try {
             $imageAnnotatorClient = new ImageAnnotatorClient([
                 'credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
-              
             ]);
         
             $imageContent = file_get_contents($request->file->getPathName());
