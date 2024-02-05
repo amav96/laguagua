@@ -1,5 +1,7 @@
 # laguagua
 
-## produccion
+## produccio
 
-instalar snappy
+## credenciales cloud vision
+
+sudo ntpdate time.google.com

@@ -213,10 +213,12 @@ class RecorridoController extends Controller
 
     public function detectarPropiedades(Request $request) {
         try {
+           
             $imageAnnotatorClient = new ImageAnnotatorClient([
                 'credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
-                'projectId' => env('GOOGLE_CLOUD_PROJECT'),
+              
             ]);
+            
     
             $imageContent = file_get_contents($request->file->getPathName());
             $response = $imageAnnotatorClient->textDetection($imageContent);
@@ -247,18 +249,18 @@ class RecorridoController extends Controller
     
                 // Busca cada propiedad en el texto utilizando las expresiones regulares
                 foreach ($patterns as $label => $pattern) {
-                    
-                    if ($label === 'direccion' && isset($patterns['dni'])) {
-                        
-                        // Si ya encontramos el dni, busca la dirección debajo del dni
-                        $dniPattern = '/DNI:\s*\d+\n(.*?)\n/';
-                        if (preg_match($dniPattern, $textContent, $dniMatches)) {
-                            $result['direccion'] = $dniMatches[1];
-                        }
-                    } elseif (preg_match($pattern, $textContent, $matches)) {
+                   if (preg_match($pattern, $textContent, $matches)) {
                         $result[$label] = $matches[1];
                     }
                 }
+
+                if (isset($result['dni'])) {
+                    //Si ya encontramos el dni, busca la dirección debajo del dni
+                    $dniPattern = '/DNI:\s*\d+\n(.*?)\n/';
+                    if (preg_match($dniPattern, $textContent, $dniMatches)) {
+                        $result['direccion'] = $dniMatches[1];
+                    }
+                } 
     
                 $imageAnnotatorClient->close();
     
