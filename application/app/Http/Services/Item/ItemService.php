@@ -45,7 +45,7 @@ class ItemService {
         ? $request["item_estado_id"] 
         : ItemEstado::PREPARADO ;
 
-        $this->validarItemDuplicado($request);
+        // $this->validarItemDuplicado($request);
 
         beginTransaction();
         try {
@@ -155,6 +155,7 @@ class ItemService {
                 ->where("empresa_id", $request["empresa_id"])
                 ->where("track_id", $request["track_id"])
                 ->exists()){
+            
             throw new BussinessException(AppErrors::ITEM_CREAR_DUPLICADO_ERROR_MESSAGE, AppErrors::ITEM_CREAR_DUPLICADO_ERROR_CODE);
         }
     }
