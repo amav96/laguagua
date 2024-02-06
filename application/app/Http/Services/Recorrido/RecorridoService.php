@@ -7,6 +7,7 @@ use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Models\Recorrido;
 use App\Models\RecorridoEstado;
+use App\Models\UsuarioConsumo;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Builder;
@@ -255,7 +256,8 @@ class RecorridoService {
         
         if(isset($result["routes"][0])){
             $ultimoNumeroParadaOrden = 0;
-            foreach($result["routes"][0]["optimizedIntermediateWaypointIndex"] as $posicionParada => $indexParada ){
+            $ordenParadas = $result["routes"][0]["optimizedIntermediateWaypointIndex"];
+            foreach($ordenParadas as $posicionParada => $indexParada ){
                 if(isset($paradasOptimizar[$indexParada])){
                    
                     $paradasOptimizar[$indexParada]->orden = $posicionParada;
@@ -270,6 +272,8 @@ class RecorridoService {
                     $paradaRestante->save();
                 }
             }
+
+            $this->guardarConsumoOptimizar($request["rider_id"], count($ordenParadas));
         }
 
         $recorrido->optimizado = 1;
@@ -277,6 +281,8 @@ class RecorridoService {
         $recorrido->duracion = $duracion;
         $recorrido->polyline = $polyline;
         $recorrido->save();
+
+        
         
         return [
             $paradasOptimizar->sortBy('orden')->concat($paradasRestantes)->values(),
@@ -339,6 +345,34 @@ class RecorridoService {
         }
 
         return $duracion;
+    }
+
+    private function guardarConsumoOptimizar(int $usuarioId, int $cantidadParadas){
+        $costo = $cantidadParadas > 12 ? 0.008 : 0.004;
+        if(!UsuarioConsumo::where('usuario_id', $usuarioId)->exists()){
+            UsuarioConsumo::create([
+                "usuario_id"            => $usuarioId,
+                "cantidad_optimizar"    => 1,
+                "consumo_optimizar"     => $costo
+            ]);
+        } else {
+            UsuarioConsumo::where('usuario_id', $usuarioId)->increment('cantidad_optimizar');
+            UsuarioConsumo::where('usuario_id', $usuarioId)->increment('consumo_optimizar', $costo);
+        }   
+    }
+
+    public function guardarConsumoDetectar(int $usuarioId){
+        $costo = 0.0015;
+        if(!UsuarioConsumo::where('usuario_id', $usuarioId)->exists()){
+            UsuarioConsumo::create([
+                "usuario_id"            => $usuarioId,
+                "cantidad_detectar"    => 1,
+                "consumo_detectar"     => $costo
+            ]);
+        } else {
+            UsuarioConsumo::where('usuario_id', $usuarioId)->increment('cantidad_detectar');
+            UsuarioConsumo::where('usuario_id', $usuarioId)->increment('consumo_detectar', $costo);
+        }   
     }
 
 }

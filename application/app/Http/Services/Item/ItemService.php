@@ -4,16 +4,12 @@ namespace App\Http\Services\Item;
 
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
-use App\Http\Services\Parada\ParadaEstadoService;
 use App\Http\Services\Parada\ParadaService;
 use App\Models\ItemEstado;
-use App\Models\ParadaEstado;
 use App\Models\Item;
 use App\Models\Parada;
 use App\Models\ParadaItem;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
-
 
 class ItemService {
 

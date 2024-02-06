@@ -1,6 +1,7 @@
 <?php 
 use Carbon\Carbon;
-
+use App\Exceptions\AppErrors;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 
 function beginTransaction(){
@@ -21,4 +22,11 @@ function getNumbers(string $value){
 
 function setTimestampFieldDB(string $value){
     return Carbon::parse($value);
+}
+
+function autorizado($usuario, $permisos = []) {
+   
+    if($usuario["email"] !== 'alvaroamav96@gmail.com'){
+        abort( response()->json(["message" => AppErrors::USUARIO_NO_AUTORIZADO_MENSAJE], 403) );
+    }
 }

@@ -223,6 +223,8 @@ class RecorridoController extends Controller
             $imageAnnotatorClient = new ImageAnnotatorClient([
                 'credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
             ]);
+
+            $usuario = $request->user();
         
             $imageContent = file_get_contents($request->file->getPathName());
             $response = $imageAnnotatorClient->textDetection($imageContent);
@@ -329,6 +331,8 @@ class RecorridoController extends Controller
                 $result = array_filter($result);
               
                 $imageAnnotatorClient->close();
+
+                $this->recorridoService->guardarConsumoDetectar($usuario->id);
     
                 return response()->json(["propiedades" => $result]);
             }

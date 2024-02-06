@@ -24,8 +24,16 @@ class AppErrors
     const USUARIO_NO_TE_PERTENECE_CODE = "USUARIO_NO_TE_PERTENECE";
     const USUARIO_NO_TE_PERTENECE_MESSAGE = "User dont belong to you";
 
-    
-    
+    const USER_ACCESS_TOKEN_INVALID_CODE = "USER_ACCESS_TOKEN_INVALID";
+    const USER_ACCESS_TOKEN_INVALID_MESSAGE = "Access token invalido";
+
+    const USER_EXISTS_CODE = "USER_EXISTS";
+    const USER_EXISTS_MESSAGE = "Usuario existe";
+
+    const INVALID_TOKEN_DONT_BELONG_APP_CODE = "INVALID_TOKEN_DONT_BELONG_APP";
+    const INVALID_TOKEN_DONT_BELONG_APP_MESSAGE = "El token no pertenece a esta aplicacion";
+
+    const USUARIO_NO_AUTORIZADO_MENSAJE = "USUARIO_NO_AUTORIZADO";
 
     // Empresa service
 

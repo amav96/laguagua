@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\CodigoArea;
+use App\Models\Pais;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,65 +12,60 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('codigos_area', function (Blueprint $table) {
+        Schema::create('paises', function (Blueprint $table) {
             $table->id();
-            $table->string("codigo");
-            $table->string("iso")->nullable();
-            $table->string("bandera")->nullable();
+            $table->string("nombre");
+            $table->string("iso");
+            
         });
 
-        CodigoArea::insert([
+        Pais::insert([
             [
-                "codigo" => "+54",
+                "nombre" => "Argentina",
                 "iso"    => "AR", 
-                "bandera"=> "AR",
             ],
             [
-                "codigo" => "+549",
+                "nombre" => "Bolivia",
                 "iso"    => "BOL", 
-                "bandera"=> "BO",
             ],
             [
-                "codigo" => "+55",
+                "nombre" => "Brasil",
                 "iso"    => "BRA", 
-                "bandera"=> "BR",
             ],
             [
-                "codigo" => "+57",
+                "nombre" => "Colombia",
                 "iso"    => "COL",
-                "bandera"=> "CO",
             ],
             [
-                "codigo" => "+593",
+                "nombre" => "Ecuador",
                 "iso"    => "ECU", 
-                "bandera"=> "EC",
             ],
             [
-                "codigo" => "+595",
+                "nombre" => "Paraguay",
                 "iso"    => "PRY", 
-                "bandera"=> "PY",
             ],
             [
-                "codigo" => "+51",
+                "nombre" => "Peru",
                 "iso"    => "PER", 
-                "bandera"=> "PE",
             ],
             [
-                "codigo" => "+598",
+                "nombre" => "Uruguay",
                 "iso"    => "URY", 
-                "bandera"=> "UY",
             ],
             [
-                "codigo" => "+54",
+                "nombre" => "Venezuela",
                 "iso"    => "VEN", 
-                "bandera"=> "VE",
             ],
             [
-                "codigo" => "+34",
+                "nombre" => "España",
                 "iso"    => "ES", 
-                "bandera"=> "ES",
             ],
         ]);
+
+        Schema::table('usuarios', function (Blueprint $table) {
+            $table->integer('pais_id')->nullable();
+        });
+
     }
 
     /**
@@ -78,6 +73,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('codigos_area');
+        Schema::dropIfExists('paises');
     }
 };

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CodigoAreaController;
 use App\Http\Controllers\ItemComprobanteController;
@@ -10,11 +11,13 @@ use App\Http\Controllers\ParadaEstadoController;
 use App\Http\Controllers\RecorridoEstadoController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ItemTipoController;
+use App\Http\Controllers\PaisController;
 use App\Http\Controllers\ParadaComprobanteController;
 use App\Http\Controllers\ParadaController;
 use App\Http\Controllers\ProveedorItemController;
 use App\Http\Controllers\RecorridoController;
 use App\Http\Controllers\TipoDocumentoController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,6 +41,9 @@ Route::prefix('auth')->group(function () {
     Route::post("registrar", [AuthController::class, 'registrar']);
     Route::post("login", [AuthController::class, 'login']);
 });
+
+Route::post('oauth/google-auth/login', [AuthController::class, 'googleAuthLogin']);
+Route::post('oauth/google-auth/registrar', [AuthController::class, 'googleAuthRegistrar']);
 
 Route::middleware(['auth:api'])->group(function () {
 
@@ -100,6 +106,11 @@ Route::middleware(['auth:api'])->group(function () {
         Route::put('/{cliente}', [ClienteController::class, 'update']);
     });
 
+     // Usuarios
+     Route::prefix('usuarios')->group(function () {
+        Route::get('', [UsuarioController::class, 'findAll']);
+    });
+
     // Empresas
     Route::get('empresas', [EmpresaController::class, 'findAll']);
     // Proveedores
@@ -118,4 +129,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('codigos-area', [CodigoAreaController::class, 'findAll']);
 
 });
+
+    // Paises
+    Route::get('paises', [PaisController::class, 'findAll']);
 
