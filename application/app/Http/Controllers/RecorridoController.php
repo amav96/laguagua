@@ -230,9 +230,10 @@ class RecorridoController extends Controller
             $response = $imageAnnotatorClient->textDetection($imageContent);
         
             // Verifica si hay alguna anotación de texto
-            if ($response->getTextAnnotations()) {
+            $anotations = $response->getTextAnnotations();
+            if ($anotations && isset($anotations[0])) {
                 // Obtiene la primera anotación de texto (puedes ajustar esto según tus necesidades)
-                $textAnnotation = $response->getTextAnnotations()[0];
+                $textAnnotation = $anotations[0];
     
                 // Accede al contenido del texto
                 $textContent = $textAnnotation->getDescription();
@@ -335,6 +336,8 @@ class RecorridoController extends Controller
                 $this->recorridoService->guardarConsumoDetectar($usuario->id);
     
                 return response()->json(["propiedades" => $result]);
+            } else {
+                return response()->json(["propiedades" => []]);
             }
         } catch (\Throwable $th) {
             return response()->json($th->getMessage(), 400);
