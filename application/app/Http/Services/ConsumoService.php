@@ -40,10 +40,10 @@ class ConsumoService {
         if(!UsuarioConsumo::where('usuario_id', $usuarioId)->exists()){
             UsuarioConsumo::create([
                 "usuario_id"            => $usuarioId,
-                "cantidad_informe"      => 1,
+                "cantidad_informes"      => 1,
             ]);
         } else {
-            UsuarioConsumo::where('usuario_id', $usuarioId)->increment('cantidad_informe');
+            UsuarioConsumo::where('usuario_id', $usuarioId)->increment('cantidad_informes');
         }   
     }
 
