@@ -375,7 +375,7 @@ class RecorridoController extends Controller
                 $configEmail["MAIL_USERNAME"],
                 $configEmail["MAIL_PASSWORD"],
                 $configEmail["MAIL_USERNAME"],
-                config('app.name'),
+                "Ruteador Informe",
                 $usuario->email,
                 'Informe',
                 'Este es el informe adjunto en formato PDF de tu recorrido',
