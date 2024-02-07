@@ -144,9 +144,6 @@ return [
         // 'store' => 'redis',
     ],
 
-    'values' => [
-        "GOOGLE_API_KEY" => env("GOOGLE_API_KEY")
-    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -197,6 +194,7 @@ return [
         'MAIL_USERNAME'     => env('MAIL_USERNAME'),
         'MAIL_PASSWORD'     => env('MAIL_PASSWORD'),
         'MAIL_FROM_ADDRESS' => env('MAIL_FROM_ADDRESS'),
+        "GOOGLE_API_KEY" => env("GOOGLE_API_KEY")
     ]
 
 ];

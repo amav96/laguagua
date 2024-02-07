@@ -205,9 +205,10 @@ class RecorridoService {
     }
     
     public function optimizar(array $request): array{
-         
-        $apiKey = config('app')["values"]["GOOGLE_API_KEY"]; 
 
+       
+        $apiKey = config('app')["values"]["GOOGLE_API_KEY"]; 
+       
         $client = new Client();
 
         $url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
