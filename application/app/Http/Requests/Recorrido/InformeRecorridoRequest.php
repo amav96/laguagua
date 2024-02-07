@@ -5,10 +5,9 @@ namespace App\Http\Requests\Recorrido;
 use App\Traits\RequestValidationHandler;
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetRecorridoRequest extends FormRequest
+class InformeRecorridoRequest extends FormRequest
 {
     use RequestValidationHandler;
-
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -24,11 +23,9 @@ class GetRecorridoRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
-            "inicio"    => "nullable|string",
-            "rider_id"  => "nullable|integer|exists:usuarios,id",
+        return [
+            "recorrido_id" => "required|exists:recorridos,id",
+            "rider_id"     => "required|exists:usuarios,id"
         ];
-
-        return $rules;
     }
 }

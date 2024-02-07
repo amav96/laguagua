@@ -7,12 +7,15 @@ use App\Exceptions\BussinessException;
 use App\Http\Requests\Recorrido\DetectarPropiedadesRequest;
 use App\Http\Requests\Recorrido\GenerarInformeRecorridoRequest;
 use App\Http\Requests\Recorrido\GetRecorridoRequest;
+use App\Http\Requests\Recorrido\InformeRecorridoRequest;
 use App\Http\Requests\Recorrido\OptimizarRecorridoRequest;
 use App\Http\Requests\Recorrido\SaveDestinoRequest;
 use App\Http\Requests\Recorrido\SaveOrigenRequest;
 use App\Http\Requests\Recorrido\SaveRecorridoRequest;
 use App\Http\Requests\Recorrido\UpdateEstadoRecorridoRequest;
 use App\Http\Requests\Recorrido\UpdateOrigenActualRequest;
+use App\Http\Services\ConsumoService;
+use App\Http\Services\EmailService;
 use App\Http\Services\Empresa\EmpresaService;
 use App\Http\Services\Recorrido\RecorridoService;
 use App\Models\CodigoArea;
@@ -21,17 +24,18 @@ use App\Models\ItemProveedor;
 use App\Models\ItemTipo;
 use App\Models\Recorrido;
 use App\Models\TipoDocumento;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Google\Cloud\Vision\V1\Feature\Type;
 use Google\Cloud\Vision\V1\ImageAnnotatorClient;
-use Google\Cloud\Vision\V1\Likelihood;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class RecorridoController extends Controller
 {
 
     public function __construct(
         public RecorridoService $recorridoService,
-        public EmpresaService $empresaService
+        public EmpresaService $empresaService,
+       
     ){}
 
     public function findAll(GetRecorridoRequest $request, int $recorrido_id = null){
@@ -332,8 +336,8 @@ class RecorridoController extends Controller
                 $result = array_filter($result);
               
                 $imageAnnotatorClient->close();
-
-                $this->recorridoService->guardarConsumoDetectar($usuario->id);
+                $consumoService =  new ConsumoService();
+                $consumoService->guardarConsumoDetectar($usuario->id);
     
                 return response()->json(["propiedades" => $result]);
             } else {
@@ -343,4 +347,55 @@ class RecorridoController extends Controller
             return response()->json($th->getMessage(), 400);
         }
     }
+
+    public function informe(InformeRecorridoRequest $request){
+
+        try {
+            $usuario = User::findOrFail($request["rider_id"]);
+
+            $recorrido = Recorrido::with(["paradas.comprobantes","paradas.paradaEstado"])->findOrFail($request["recorrido_id"]);
+           
+            $urlBucket = env('S3BUCKETLAGUAGUA');
+            $pdf = PDF::loadView('pdf.Recorrido.informe', ["recorrido" => $recorrido , "urlBucket" => $urlBucket]);
+
+            // Generar un nombre de archivo único para el PDF
+            $pdfFileName = 'informe_' . time() . '.pdf';
+
+            $path = storage_path('app/temp/' . $pdfFileName);
+
+            // Guardar el PDF en una ubicación temporal del servidor
+            $pdf->save( $path);
+
+            $emailService = new EmailService();
+
+            $configEmail = config('app.values');
+
+            $emailService->sendEmail(
+                $configEmail["MAIL_HOST"],
+                $configEmail["MAIL_USERNAME"],
+                $configEmail["MAIL_PASSWORD"],
+                $configEmail["MAIL_USERNAME"],
+                config('app.name'),
+                $usuario->email,
+                'Informe',
+                'Este es el informe adjunto en formato PDF de tu recorrido',
+                $path
+            );
+
+            // Eliminar el PDF temporal después de enviar el correo electrónico
+            unlink( $path);
+
+           
+            $consumoService =  new ConsumoService();
+            $consumoService->guardarConsumoInforme($usuario->id);
+
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(), $e->getInternalCode() === AppErrors::RECORRIDO_USUARIO_NO_TE_PERTENECE_CODE ? 404 : 400);
+        }
+        
+       
+        return  response()->json();
+    }
+
+    
 }

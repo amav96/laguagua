@@ -45,6 +45,10 @@ Route::prefix('auth')->group(function () {
 Route::post('oauth/google-auth/login', [AuthController::class, 'googleAuthLogin']);
 Route::post('oauth/google-auth/registrar', [AuthController::class, 'googleAuthRegistrar']);
 
+Route::prefix('recorridos')->group(function () {
+    Route::post('/informe', [RecorridoController::class, 'informe']);
+});
+
 Route::middleware(['auth:api'])->group(function () {
 
     // auth

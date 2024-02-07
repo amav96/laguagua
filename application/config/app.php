@@ -189,4 +189,14 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    
+    'values' => [
+        'MAIL_MAILER'       => env('MAIL_MAILER'),
+        'MAIL_HOST'         => env('MAIL_HOST'),
+        'MAIL_PORT'         => env('MAIL_PORT'),
+        'MAIL_USERNAME'     => env('MAIL_USERNAME'),
+        'MAIL_PASSWORD'     => env('MAIL_PASSWORD'),
+        'MAIL_FROM_ADDRESS' => env('MAIL_FROM_ADDRESS'),
+    ]
+
 ];
