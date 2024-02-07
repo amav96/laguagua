@@ -11,6 +11,7 @@ use App\Models\UsuarioConsumo;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use PDF;
 
 class RecorridoService {
@@ -18,12 +19,13 @@ class RecorridoService {
     public function findAll(array $parametros, array $permisos = [], int $usuarioAutenticadoId) {
 
         $query = Recorrido::query();
-       
+
+    
         $query = $query
                 ->when(isset($parametros["incluir"]), function (Builder $q) use($parametros) : void {
-                    $q->with(explode(",", $parametros["incluir"]));
+                    $q->with($parametros["incluir"]);
                 })
-                ->when(isset($parametros["incluir"]) && strpos($parametros["incluir"], "paradas") !== false, function (Builder $q) : void {
+                ->when($this->incluyeParada($parametros), function (Builder $q) : void {
                     $q->with(['paradas' => function ($query) {
                         $query->orderBy('orden', 'asc'); 
                     }]);
@@ -60,6 +62,21 @@ class RecorridoService {
 
         return $query;
 
+    }
+
+    private function incluyeParada($parametros)
+    {
+        if (!isset($parametros["incluir"]) || !is_array($parametros["incluir"])) {
+            return false; // No se incluyen paradas si no se proporciona un array de inclusión
+        }
+
+        foreach ($parametros["incluir"] as $incluir) {
+            if (strpos($incluir, "paradas") !== false) {
+                return true; // Se incluyen paradas si al menos un elemento del array contiene la palabra "paradas"
+            }
+        }
+
+        return false; // No se incluyen paradas si ninguno de los elementos del array contiene la palabra "paradas"
     }
 
     public function create(array $request, int $creadoPor){

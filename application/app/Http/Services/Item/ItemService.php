@@ -18,7 +18,7 @@ class ItemService {
         $query = Item::query();
         $query = $query
                 ->when(isset($parametros["incluir"]), function (Builder $q) use($parametros) : void {
-                    $q->with(explode(",", $parametros["incluir"]));
+                    $q->with($parametros["incluir"]);
                 })
                 ->when(isset($parametros["item_id"]), function (Builder $q) use($parametros) : void {
                     $q->where('id', $parametros["item_id"]); 
