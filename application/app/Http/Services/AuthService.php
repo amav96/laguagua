@@ -136,10 +136,9 @@ class AuthService {
 
         } else {
             $aud = $responseData["aud"];
-            if($aud !== config("services.google.client_id")){
+            if($aud !== config("services.google.client_id_web") && $aud !== config("services.google.client_id_app")){
                 return false;
             }
-            
             return $responseData;
         }
     }

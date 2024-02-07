@@ -21,7 +21,8 @@ return [
         'scheme' => 'https',
     ],
     'google' => [
-        'client_id'     => env('GOOGLE_CLIENT_ID'),
+        'client_id_web'     => env('GOOGLE_CLIENT_ID_WEB'),
+        'client_id_app'     => env('GOOGLE_CLIENT_ID_APP'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
     ],
 
