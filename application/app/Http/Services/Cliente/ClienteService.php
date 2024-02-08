@@ -16,7 +16,7 @@ class ClienteService {
       
         $query = $query
                 ->when(isset($params["incluir"]), function (Builder $q) use($params) : void {
-                    $q->with(explode(",", $params["incluir"])); 
+                    $q->with($params["incluir"]); 
                 })
                 ->when(isset($params["cliente_id"]), function (Builder $q) use($params) : void {
                     $q->where('id', $params["cliente_id"]); 
