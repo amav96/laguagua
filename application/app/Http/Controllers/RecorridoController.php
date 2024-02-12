@@ -17,6 +17,7 @@ use App\Http\Requests\Recorrido\UpdateOrigenActualRequest;
 use App\Http\Services\ConsumoService;
 use App\Http\Services\EmailService;
 use App\Http\Services\Empresa\EmpresaService;
+use App\Http\Services\Recorrido\OptimizarService;
 use App\Http\Services\Recorrido\RecorridoService;
 use App\Models\CodigoArea;
 use App\Models\ItemEstado;
@@ -216,9 +217,35 @@ class RecorridoController extends Controller
 
     public function optimizar(OptimizarRecorridoRequest $request){
         
-        [$recorrido, $distancia, $duracion, $polyline ] = $this->recorridoService->optimizar($request->all());
+       try {
 
-        return response()->json(compact('recorrido', 'distancia', 'duracion', 'polyline'), 200);
+            $data = $request->all();
+
+            $recorrido = Recorrido::with('paradas.paradaEstado')->findOrFail($request["recorrido_id"]);
+
+            $optimizador = new OptimizarService();
+            $optimizador->setUsuarioId($data["rider_id"]);
+            $optimizador->setParadas($recorrido->paradas);
+            $optimizador->setOrigenLat($recorrido->origen_actual_lat);
+            $optimizador->setOrigenLng($recorrido->origen_actual_lng);
+            $optimizador->setDestinoLng($recorrido->destino_lng);
+            $optimizador->setDestinoLat($recorrido->destino_lat);
+            $optimizador->setRecorridoId($request["recorrido_id"]);
+            
+            [$paradas, $distancia, $duracion, $polyline ] = $optimizador->optimizar();
+        
+            $recorrido->optimizado = 1;
+            $recorrido->distancia = $distancia;
+            $recorrido->duracion = $duracion;
+            $recorrido->polyline = $polyline;
+            
+            $recorrido->save();
+
+       } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(), 400);
+       }
+
+        return response()->json(compact('paradas', 'distancia', 'duracion', 'polyline'), 200);
     }
 
     public function detectarPropiedades(DetectarPropiedadesRequest $request) {
