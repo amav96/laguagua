@@ -230,7 +230,6 @@ class RecorridoController extends Controller
             $optimizador->setOrigenLng($recorrido->origen_actual_lng);
             $optimizador->setDestinoLng($recorrido->destino_lng);
             $optimizador->setDestinoLat($recorrido->destino_lat);
-            $optimizador->setRecorridoId($request["recorrido_id"]);
             
             [$paradas, $distancia, $duracion, $polyline ] = $optimizador->optimizar();
         
@@ -246,6 +245,29 @@ class RecorridoController extends Controller
        }
 
         return response()->json(compact('paradas', 'distancia', 'duracion', 'polyline'), 200);
+    }
+
+    public function polyline(OptimizarRecorridoRequest $request){
+        try {
+
+            $data = $request->all();
+
+            $recorrido = Recorrido::with('paradas.paradaEstado')->findOrFail($request["recorrido_id"]);
+
+            $optimizador = new OptimizarService();
+            $optimizador->setUsuarioId($data["rider_id"]);
+            $optimizador->setParadas($recorrido->paradas);
+            $optimizador->setOrigenLat($recorrido->origen_actual_lat);
+            $optimizador->setOrigenLng($recorrido->origen_actual_lng);
+            $optimizador->setDestinoLng($recorrido->destino_lng);
+            $optimizador->setDestinoLat($recorrido->destino_lat);
+            [ $polyline ] = $optimizador->polyline();
+
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(), 400);
+        }
+
+        return response()->json(["polyline" => $polyline]);
     }
 
     public function detectarPropiedades(DetectarPropiedadesRequest $request) {

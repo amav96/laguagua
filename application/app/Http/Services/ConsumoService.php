@@ -7,8 +7,7 @@ use App\Models\UsuarioConsumo;
 class ConsumoService {
 
 
-    public function guardarConsumoOptimizar(int $usuarioId, int $cantidadParadas){
-        $costo = $cantidadParadas > 12 ? 0.008 : 0.004;
+    public function guardarConsumoOptimizar(int $usuarioId, int $cantidadParadas, $costo){
         if(!UsuarioConsumo::where('usuario_id', $usuarioId)->exists()){
             UsuarioConsumo::create([
                 "usuario_id"            => $usuarioId,

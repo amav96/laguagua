@@ -69,6 +69,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::patch('destino-remover/{recorrido}', [RecorridoController::class, 'removeDestino']);
         Route::patch('/{recorrido}/estado', [RecorridoController::class, 'updateEstado']);
         Route::post('optimizar', [RecorridoController::class, 'optimizar']);
+        Route::post('polyline', [RecorridoController::class, 'polyline']);
 
         Route::post('/detectar-propiedades', [RecorridoController::class, 'detectarPropiedades']);
     });

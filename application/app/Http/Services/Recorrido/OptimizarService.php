@@ -5,8 +5,12 @@ namespace App\Http\Services\Recorrido;
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Http\Services\ConsumoService;
+use App\Http\Services\FlexiblePolyline\FlexiblePolyline;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
+
 use Illuminate\Database\Eloquent\Collection;
+
 
 class OptimizarService {
 
@@ -15,14 +19,141 @@ class OptimizarService {
     protected float $origenLng;
     protected float $destinoLat;
     protected float $destinoLng;
-    protected int $recorridoId;
     protected int $usuarioId;
-    protected int $paradasPorBloque = 4;
 
+    public function setParadas(Collection $paradas){
+        $this->paradas = $paradas;
+    }
+
+    public function setOrigenLat(float $origenLat){
+        $this->origenLat = $origenLat;
+    }
+
+    public function setOrigenLng(float $origenLng){
+        $this->origenLng = $origenLng;
+    }
+
+    public function setDestinoLat(float $destinoLat){
+        $this->destinoLat = $destinoLat;
+    }
+
+    public function setDestinoLng(float $destinoLng){
+        $this->destinoLng = $destinoLng;
+    }
+
+    public function setUsuarioId(int $usuarioId){
+        $this->usuarioId = $usuarioId;
+    }
 
     public function optimizar(){
         
         try {
+            
+            $paradasOptimizar = $this->paradas->filter(function ($parada) {
+                return isset($parada['paradaEstado']) && $parada['paradaEstado']['codigo'] !== 'visitado' && $parada['paradaEstado']['tipo'] !== 'negativo';
+            })->values();
+
+            $paradasRestantes = $this->paradas->reject(function ($parada) use ($paradasOptimizar) {
+                return $paradasOptimizar->contains($parada);
+            })->values()->sortByDesc('realizado_en');
+
+            if($paradasOptimizar->count() < 3){
+                list($paradasOptimizadas, $distancia, $duracion, $polyline) = $this->GOOGLEOptimizador($paradasOptimizar, $paradasRestantes);
+            } else {
+                list($paradasOptimizadas, $distancia, $duracion, $polyline) = $this->HEREOptimizador($paradasOptimizar, $paradasRestantes);
+            }
+            
+
+        } catch (\Throwable $th) {
+           
+            throw new BussinessException(AppErrors::RECORRIDO_OPTIMIZAR_ERROR_MESSAGE, AppErrors::RECORRIDO_OPTIMIZAR_ERROR_CODE);
+        }
+        return [
+            $paradasOptimizadas->sortBy('orden')->concat($paradasRestantes)->values(),
+            $distancia,
+            $duracion,
+            $polyline
+        ];
+    }
+
+    public function HEREOptimizador(Collection $paradas, Collection $paradasRestantes): array {
+      
+        try {
+            $apiKey = config('app')["values"]["HERE_API_KEY"]; 
+        
+            $client = new Client();
+
+            $url = 'https://wps.hereapi.com/v8/findsequence2';
+        
+            // Construir los datos de la solicitud
+            
+            $data = [
+                'start' => $this->origenLat.','.$this->origenLng,
+                'end' => $this->destinoLat.','.$this->destinoLng,
+                'mode' => 'car',
+                'improveFor'    => 'distance',
+                'departure' => Carbon::now()->toIso8601String(),
+            
+            ];
+
+            foreach ($paradas as $key => $parada) {
+                $data["destination".$key + 1] = $parada->id.';'.$parada->lat.','.$parada->lng;
+            }
+
+            $response = $client->get($url.'?&'.http_build_query($data).'&apiKey='.$apiKey);
+
+            $result = json_decode($response->getBody(), true);
+        
+            $distancia = $this->convertirDistancia($result["results"][0]["distance"]);
+            $duracion = $this->convertirDuracion($result["results"][0]["time"]);
+        
+            if(isset($result["results"][0])){
+                $ultimoNumeroParadaOrden = 0;
+                $ordenParadas = $result["results"][0]["waypoints"];
+            
+                foreach($ordenParadas as $posicionParada => $parada ){
+                    if($parada["id"] !== "start" && $parada["id"] !== "end"){
+                        $indexParada = $paradas->search((function($p) use($parada){
+                            return $p->id == $parada["id"];
+                        }));
+                        if(gettype($indexParada) === 'integer'){
+                            $paradas[$indexParada]->orden = $parada["sequence"];
+                            $paradas[$indexParada]->save();
+                            $ultimoNumeroParadaOrden = $parada["sequence"];
+                        }
+                    }
+
+                }
+                if(!$paradasRestantes->isEmpty()){
+                    foreach($paradasRestantes as $paradaRestante){
+                        $ultimoNumeroParadaOrden++;
+                        $paradaRestante->orden = $ultimoNumeroParadaOrden;
+                        $paradaRestante->save();
+                    }
+                }
+
+                $consumoService =  new ConsumoService();
+                $consumoService->guardarConsumoOptimizar($this->usuarioId, count($ordenParadas), 0,0055);
+            }
+
+        } catch (\Throwable $th) {
+            throw new BussinessException(AppErrors::RECORRIDO_OPTIMIZAR_ERROR_MESSAGE, AppErrors::RECORRIDO_OPTIMIZAR_ERROR_CODE);
+        }
+
+
+        return [
+            $paradas,
+            $distancia,
+            $duracion,
+            null
+        ];
+
+    }
+
+    public function GOOGLEOptimizador(Collection $paradas, Collection $paradasRestantes){
+
+        try {
+
             $apiKey = config('app')["values"]["GOOGLE_API_KEY"]; 
        
             $client = new Client();
@@ -51,23 +182,8 @@ class OptimizarService {
                 "optimizeWaypointOrder" => true
             ];
 
-            $paradasOptimizar = $this->paradas->filter(function ($parada) {
-                return isset($parada['paradaEstado']) && $parada['paradaEstado']['codigo'] !== 'visitado' && $parada['paradaEstado']['tipo'] !== 'negativo';
-            })->values();
-
-            $puntoInicialPrimerBloque = [
-                "lat" => $this->origenLat,
-                "lng" => $this->origenLng
-            ];
-
-            $bloquesParadas = $this->bloquesParadas($paradasOptimizar->toArray(), $puntoInicialPrimerBloque);
-            dd($bloquesParadas);
-            
-            $paradasRestantes = $this->paradas->reject(function ($parada) use ($paradasOptimizar) {
-                return $paradasOptimizar->contains($parada);
-            })->values()->sortByDesc('realizado_en');
-        
-            $data["intermediates"] = $paradasOptimizar->map(function($item){
+  
+            $data["intermediates"] = $paradas->map(function($item){
                 return [
                     'location' => [
                         'latLng' => [
@@ -93,17 +209,17 @@ class OptimizarService {
             $result = json_decode($response->getBody(), true);
 
             $distancia = $this->convertirDistancia($result["routes"][0]["distanceMeters"]);
-            $duracion = $this->convertirDuracion($result["routes"][0]["duration"]);
+            $duracion = $this->convertirDuracion($result["routes"][0]["duration"], '/(\d+)s/');
             $polyline = $result["routes"][0]["polyline"]["encodedPolyline"];
             
             if(isset($result["routes"][0])){
                 $ultimoNumeroParadaOrden = 0;
                 $ordenParadas = $result["routes"][0]["optimizedIntermediateWaypointIndex"];
                 foreach($ordenParadas as $posicionParada => $indexParada ){
-                    if(isset($paradasOptimizar[$indexParada])){
+                    if(isset($paradas[$indexParada])){
                     
-                        $paradasOptimizar[$indexParada]->orden = $posicionParada;
-                        $paradasOptimizar[$indexParada]->save();
+                        $paradas[$indexParada]->orden = $posicionParada;
+                        $paradas[$indexParada]->save();
                         $ultimoNumeroParadaOrden = $posicionParada;
                     }
                 }
@@ -116,119 +232,19 @@ class OptimizarService {
                 }
 
                 $consumoService =  new ConsumoService();
-                $consumoService->guardarConsumoOptimizar($this->usuarioId, count($ordenParadas));
+                $consumoService->guardarConsumoOptimizar($this->usuarioId, count($ordenParadas), $paradas->count() > 12 ? 0.008 : 0.004);
             }
         } catch (\Throwable $th) {
-            dd($th);
             throw new BussinessException(AppErrors::RECORRIDO_OPTIMIZAR_ERROR_MESSAGE, AppErrors::RECORRIDO_OPTIMIZAR_ERROR_CODE);
         }
         return [
-            $paradasOptimizar->sortBy('orden')->concat($paradasRestantes)->values(),
+            $paradas->sortBy('orden')->concat($paradasRestantes)->values(),
             $distancia,
             $duracion,
             $polyline
         ];
-    }
 
-    private function bloquesParadas(array $paradas, array $puntoInicialPrimerBloque) : array {
-        $bloques = [];
-        $paradasNoAsignadas = $paradas;
-        $puntoDeReferencia = $puntoInicialPrimerBloque; // Inicializar con el punto inicial del primer bloque
-    
-        while (!empty($paradasNoAsignadas)) {
-            $bloque = $this->generarBloque($paradasNoAsignadas, $puntoDeReferencia);
-            $bloques[] = $bloque;
-    
-            // Actualizar el punto de referencia para el siguiente bloque
-            $puntoDeReferencia = end($bloque); // La última parada del bloque actual es el punto de referencia del siguiente bloque
-    
-            // Eliminar los elementos de $bloque de $paradasNoAsignadas
-            foreach ($bloque as $parada) {
-                foreach ($paradasNoAsignadas as $key => $p) {
-                    if ($parada['id'] === $p['id']) {
-                        unset($paradasNoAsignadas[$key]);
-                        break; // Salir del bucle interior una vez que se ha encontrado y eliminado el elemento
-                    }
-                }
-            }
-        }
-    
-        return $bloques;
     }
-    
-    private function generarBloque(array &$paradasNoAsignadas, array $puntoDeReferencia) : array {
-        $bloque = [];
-        $paradaInicial = null;
-        $distanciaExtrema = PHP_FLOAT_MAX; // Inicializar con la distancia máxima
-    
-        // Buscar la parada más cercana al punto de referencia actual
-        foreach ($paradasNoAsignadas as $key => $parada) {
-            $distancia = $this->calcularDistanciaEntreParadas(
-                $puntoDeReferencia['lat'],    // Latitud del punto de referencia
-                $puntoDeReferencia['lng'],    // Longitud del punto de referencia
-                $parada['lat'],               // Latitud de la parada actual
-                $parada['lng']                // Longitud de la parada actual
-            );
-    
-            if ($distancia < $distanciaExtrema) {
-                $paradaInicial = $parada;
-                $distanciaExtrema = $distancia;
-                $keyToDelete = $key; // Guardar la clave del elemento a eliminar
-            }
-        }
-    
-        // Agregar la parada inicial al bloque
-        $bloque[] = $paradaInicial;
-    
-        // Eliminar la parada inicial del array $paradasNoAsignadas
-        unset($paradasNoAsignadas[$keyToDelete]);
-    
-        // Actualizar el punto de referencia para las siguientes paradas
-        $puntoDeReferencia = $paradaInicial;
-    
-        // Continuar llenando el bloque con las paradas restantes
-        while (count($bloque) < $this->paradasPorBloque && !empty($paradasNoAsignadas)) {
-            // Resto de la lógica sigue igual, pero ahora la parada anterior es la última del bloque
-            $paradaMasCercana = null;
-            $distanciaMinima = PHP_FLOAT_MAX;
-    
-            foreach ($paradasNoAsignadas as $key => $parada) {
-                $distancia = $this->calcularDistanciaEntreParadas(
-                    $bloque[count($bloque) - 1]['lat'], // Latitud de la última parada en el bloque
-                    $bloque[count($bloque) - 1]['lng'], // Longitud de la última parada en el bloque
-                    $parada['lat'],                      // Latitud de la parada actual
-                    $parada['lng']                       // Longitud de la parada actual
-                );
-    
-                if ($distancia < $distanciaMinima) {
-                    $paradaMasCercana = $parada;
-                    $distanciaMinima = $distancia;
-                    $keyToDelete = $key; // Guardar la clave del elemento a eliminar
-                }
-            }
-    
-            // Agregar la parada más cercana al bloque
-            $bloque[] = $paradaMasCercana;
-            
-            // Eliminar el elemento del array original
-            unset($paradasNoAsignadas[$keyToDelete]);
-        }
-    
-        return $bloque;
-    }
-
-    private function calcularDistanciaEntreParadas($lat1, $lng1, $lat2, $lng2) {
-        $radio_tierra = 6371; // Radio de la Tierra en kilómetros
-        $delta_lat = deg2rad($lat2 - $lat1);
-        $delta_lon = deg2rad($lng2 - $lng1);
-        $a = sin($delta_lat / 2) * sin($delta_lat / 2) +
-             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-             sin($delta_lon / 2) * sin($delta_lon / 2);
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-        $distancia = $radio_tierra * $c;
-        return $distancia;
-    }
-    
 
     private function convertirDistancia($metros)
     {
@@ -239,52 +255,110 @@ class OptimizarService {
         }
     }
 
-    private function convertirDuracion($duracion)
+    private function convertirDuracion($duracion, $expresion = null)
     {
-        // Extraer el número de segundos utilizando expresiones regulares
-        preg_match('/(\d+)s/', $duracion, $matches);
-
-        if (!empty($matches[1])) {
-            $segundos = (int)$matches[1];
-
-            $horas = floor($segundos / 3600);
-            $minutos = floor(($segundos % 3600) / 60);
-
-            if ($horas > 0) {
-                return "$horas h " . ($minutos > 0 ? "$minutos min" : "");
-            } else {
-                return "$minutos min";
+        if($expresion){
+            preg_match($expresion, $duracion, $matches);
+            if (!empty($matches[1])) {
+                $segundos = (int)$matches[1];
             }
+        }
+         else {
+            $segundos = $duracion;
+        }
+
+        $horas = floor($segundos / 3600);
+        $minutos = floor(($segundos % 3600) / 60);
+
+        if ($horas > 0) {
+            return "$horas h " . ($minutos > 0 ? "$minutos min" : "");
+        } else {
+            return "$minutos min";
         }
 
         return $duracion;
     }
 
-    public function setParadas(Collection $paradas){
-        $this->paradas = $paradas;
+    public function polyline(){
+
+        $paradasRecorrido = $this->paradas->filter(function ($parada) {
+            return isset($parada['paradaEstado']) && $parada['paradaEstado']['codigo'] !== 'visitado' && $parada['paradaEstado']['tipo'] !== 'negativo';
+        })->values()->sortBy("orden");
+
+        $data = [
+            "transportMode" => "car",
+            "origin"    => $this->origenLat.','.$this->origenLng,
+            "destination"    => $this->destinoLat.','.$this->destinoLng,
+            "return"    => "polyline"
+        ];
+
+        $params = http_build_query($data);
+       
+        foreach($paradasRecorrido as $parada){
+            $viaParams[] = 'via='.$parada->lat.','.$parada->lng;
+        }
+       
+        $apiKey = config('app')["values"]["HERE_API_KEY"]; 
+        $client = new Client();
+        $url = 'https://router.hereapi.com/v8/routes';
+        
+        $response = $client->get($url.'?'.$params.'&'.implode('&', $viaParams).'&apiKey='.$apiKey);
+        
+        $result = json_decode($response->getBody(), true);
+       
+    
+        $polylinePoints = [];
+        foreach ($result['routes'][0]['sections'] as $section) {
+            $polyline = $section['polyline'];
+            $decodedPolyline = FlexiblePolyline::decode($polyline);
+           
+            $polylinePoints = array_merge($polylinePoints, $decodedPolyline['polyline']);
+            
+        }
+        
+        $herepoly = PolylineDecoderService::decode(FlexiblePolyline::encode($polylinePoints));
+        return [$this->encodePolyline($herepoly["polyline"])];
+
+        // return [FlexiblePolyline::encode($polylinePoints)];
     }
 
-    public function setOrigenLat(float $origenLat){
-        $this->origenLat = $origenLat;
+
+
+    private function encodePolyline($coordinates) {
+        $encoded = '';
+        $prevLat = 0;
+        $prevLng = 0;
+        
+        foreach ($coordinates as $coordinate) {
+            $lat = $coordinate[0];
+            $lng = $coordinate[1];
+    
+            $latDiff = round(($lat - $prevLat) * 1e5);
+            $lngDiff = round(($lng - $prevLng) * 1e5);
+    
+            $encoded .= $this->encodeValue($latDiff) . $this->encodeValue($lngDiff);
+    
+            $prevLat = $lat;
+            $prevLng = $lng;
+        }
+    
+        return $encoded;
+    }
+    
+    private function encodeValue($value) {
+        $value <<= 1;
+        if ($value < 0) {
+            $value = ~$value;
+        }
+    
+        $encoded = '';
+        while ($value >= 0x20) {
+            $encoded .= chr((0x20 | ($value & 0x1f)) + 63);
+            $value >>= 5;
+        }
+        $encoded .= chr($value + 63);
+        return $encoded;
     }
 
-    public function setOrigenLng(float $origenLng){
-        $this->origenLng = $origenLng;
-    }
 
-    public function setDestinoLat(float $destinoLat){
-        $this->destinoLat = $destinoLat;
-    }
-
-    public function setDestinoLng(float $destinoLng){
-        $this->destinoLng = $destinoLng;
-    }
-
-    public function setRecorridoId(int $recorridoId){
-        $this->recorridoId = $recorridoId;
-    }
-
-    public function setUsuarioId(int $usuarioId){
-        $this->usuarioId = $usuarioId;
-    }
 }

@@ -194,7 +194,8 @@ return [
         'MAIL_USERNAME'     => env('MAIL_USERNAME'),
         'MAIL_PASSWORD'     => env('MAIL_PASSWORD'),
         'MAIL_FROM_ADDRESS' => env('MAIL_FROM_ADDRESS'),
-        "GOOGLE_API_KEY" => env("GOOGLE_API_KEY")
+        "GOOGLE_API_KEY" => env("GOOGLE_API_KEY"),
+        "HERE_API_KEY" => env("HERE_API_KEY")
     ]
 
 ];
