@@ -6,6 +6,7 @@ use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Http\Services\ConsumoService;
 use App\Http\Services\FlexiblePolyline\FlexiblePolyline;
+use App\Models\Recorrido;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 
@@ -306,23 +307,19 @@ class OptimizarService {
         
         $result = json_decode($response->getBody(), true);
        
-    
         $polylinePoints = [];
         foreach ($result['routes'][0]['sections'] as $section) {
             $polyline = $section['polyline'];
             $decodedPolyline = FlexiblePolyline::decode($polyline);
-           
             $polylinePoints = array_merge($polylinePoints, $decodedPolyline['polyline']);
-            
         }
         
-        $herepoly = PolylineDecoderService::decode(FlexiblePolyline::encode($polylinePoints));
-        return [$this->encodePolyline($herepoly["polyline"])];
+        // RENDERIZA EN GOOGLE MAPS
+        return [$this->encodePolyline($polylinePoints)]; 
 
+        // RENDERIZA EN HERE MAPS
         // return [FlexiblePolyline::encode($polylinePoints)];
     }
-
-
 
     private function encodePolyline($coordinates) {
         $encoded = '';

@@ -261,7 +261,11 @@ class RecorridoController extends Controller
             $optimizador->setOrigenLng($recorrido->origen_actual_lng);
             $optimizador->setDestinoLng($recorrido->destino_lng);
             $optimizador->setDestinoLat($recorrido->destino_lat);
+
             [ $polyline ] = $optimizador->polyline();
+
+            $recorrido->polyline = $polyline;
+            $recorrido->save();
 
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(), 400);
