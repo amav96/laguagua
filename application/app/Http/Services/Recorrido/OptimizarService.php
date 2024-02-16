@@ -58,7 +58,7 @@ class OptimizarService {
                 return $paradasOptimizar->contains($parada);
             })->values()->sortByDesc('realizado_en');
 
-            if($paradasOptimizar->count() < 3){
+            if($paradasOptimizar->count() <= 25){
                 list($paradasOptimizadas, $distancia, $duracion, $polyline) = $this->GOOGLEOptimizador($paradasOptimizar, $paradasRestantes);
             } else {
                 list($paradasOptimizadas, $distancia, $duracion, $polyline) = $this->HEREOptimizador($paradasOptimizar, $paradasRestantes);
