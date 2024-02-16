@@ -134,7 +134,7 @@ class OptimizarService {
                 }
 
                 $consumoService =  new ConsumoService();
-                $consumoService->guardarConsumoOptimizar($this->usuarioId, '0,0055');
+                $consumoService->guardarConsumoOptimizar($this->usuarioId, 0.0055);
             }
 
         } catch (\Throwable $th) {
@@ -233,7 +233,7 @@ class OptimizarService {
                 }
 
                 $consumoService =  new ConsumoService();
-                $consumoService->guardarConsumoOptimizar($this->usuarioId, count($ordenParadas), $paradas->count() > 12 ? 0.008 : 0.004);
+                $consumoService->guardarConsumoOptimizar($this->usuarioId, $paradas->count() > 12 ? 0.008 : 0.004);
             }
         } catch (\Throwable $th) {
             throw new BussinessException(AppErrors::RECORRIDO_OPTIMIZAR_ERROR_MESSAGE, AppErrors::RECORRIDO_OPTIMIZAR_ERROR_CODE);
@@ -315,7 +315,7 @@ class OptimizarService {
         }
 
         $consumoService =  new ConsumoService();
-        $consumoService->guardarConsumoPolyline($this->usuarioId, '0,00083');
+        $consumoService->guardarConsumoPolyline($this->usuarioId, 0.00083);
         
         // RENDERIZA EN GOOGLE MAPS
         return [$this->encodePolyline($polylinePoints)]; 
