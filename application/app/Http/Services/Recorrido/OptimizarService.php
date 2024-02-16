@@ -239,7 +239,7 @@ class OptimizarService {
             throw new BussinessException(AppErrors::RECORRIDO_OPTIMIZAR_ERROR_MESSAGE, AppErrors::RECORRIDO_OPTIMIZAR_ERROR_CODE);
         }
         return [
-            $paradas->sortBy('orden')->concat($paradasRestantes)->values(),
+            $paradas,
             $distancia,
             $duracion,
             $polyline
