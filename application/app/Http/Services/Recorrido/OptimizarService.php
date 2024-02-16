@@ -219,7 +219,7 @@ class OptimizarService {
                 foreach($ordenParadas as $posicionParada => $indexParada ){
                     if(isset($paradas[$indexParada])){
                     
-                        $paradas[$indexParada]->orden = $posicionParada;
+                        $paradas[$indexParada]->orden = $posicionParada + 1;
                         $paradas[$indexParada]->save();
                         $ultimoNumeroParadaOrden = $posicionParada;
                     }
