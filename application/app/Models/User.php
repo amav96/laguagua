@@ -63,6 +63,11 @@ class User extends Authenticatable
     public function usuarioConsumo() :BelongsTo {
         return $this->belongsTo(UsuarioConsumo::class, 'id', 'usuario_id');
     }
+
+    public function paradas()
+    {
+        return $this->hasMany(Parada::class, 'rider_id', 'id');
+    }
 }
 
 

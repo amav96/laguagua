@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('usuarios_consumos', function (Blueprint $table) {
-            $table->integer("cantidad_informes")->default(0);
+            $table->integer("cantidad_polyline")->default(0);
+            $table->double("consumo_polyline")->default(0);
         });
     }
 
@@ -22,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('usuarios_consumos', function (Blueprint $table) {
-            $table->dropColumn("cantidad_informes")->default(0);
+            $table->dropColumn("cantidad_polyline")->default(0);
+            $table->dropColumn("consumo_polyline")->default(0);
         });
     }
 };

@@ -7,16 +7,17 @@ use App\Models\UsuarioConsumo;
 class ConsumoService {
 
 
-    public function guardarConsumoOptimizar(int $usuarioId, int $cantidadParadas, $costo){
+    public function guardarConsumoOptimizar(int $usuarioId, $costo){
+        $costoDouble = floatval(str_replace(',', '.', $costo));
         if(!UsuarioConsumo::where('usuario_id', $usuarioId)->exists()){
             UsuarioConsumo::create([
                 "usuario_id"            => $usuarioId,
                 "cantidad_optimizar"    => 1,
-                "consumo_optimizar"     => $costo
+                "consumo_optimizar"     => $costoDouble
             ]);
         } else {
             UsuarioConsumo::where('usuario_id', $usuarioId)->increment('cantidad_optimizar');
-            UsuarioConsumo::where('usuario_id', $usuarioId)->increment('consumo_optimizar', $costo);
+            UsuarioConsumo::where('usuario_id', $usuarioId)->increment('consumo_optimizar', $costoDouble);
         }   
     }
 
@@ -31,6 +32,21 @@ class ConsumoService {
         } else {
             UsuarioConsumo::where('usuario_id', $usuarioId)->increment('cantidad_detectar');
             UsuarioConsumo::where('usuario_id', $usuarioId)->increment('consumo_detectar', $costo);
+        }   
+    }
+
+    public function guardarConsumoPolyline(int $usuarioId, string $costo){
+        $costoDouble = floatval(str_replace(',', '.', $costo));
+       
+        if(!UsuarioConsumo::where('usuario_id', $usuarioId)->exists()){
+            UsuarioConsumo::create([
+                "usuario_id"            => $usuarioId,
+                "cantidad_polyline"    => 1,
+                "consumo_polyline"     => $costoDouble
+            ]);
+        } else {
+            UsuarioConsumo::where('usuario_id', $usuarioId)->increment('cantidad_polyline');
+            UsuarioConsumo::where('usuario_id', $usuarioId)->increment('consumo_polyline', $costoDouble);
         }   
     }
 

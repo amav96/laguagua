@@ -134,7 +134,7 @@ class OptimizarService {
                 }
 
                 $consumoService =  new ConsumoService();
-                $consumoService->guardarConsumoOptimizar($this->usuarioId, count($ordenParadas), 0,0055);
+                $consumoService->guardarConsumoOptimizar($this->usuarioId, '0,0055');
             }
 
         } catch (\Throwable $th) {
@@ -313,6 +313,9 @@ class OptimizarService {
             $decodedPolyline = FlexiblePolyline::decode($polyline);
             $polylinePoints = array_merge($polylinePoints, $decodedPolyline['polyline']);
         }
+
+        $consumoService =  new ConsumoService();
+        $consumoService->guardarConsumoPolyline($this->usuarioId, '0,00083');
         
         // RENDERIZA EN GOOGLE MAPS
         return [$this->encodePolyline($polylinePoints)]; 
@@ -322,6 +325,8 @@ class OptimizarService {
     }
 
     private function encodePolyline($coordinates) {
+        // encode para google maps
+
         $encoded = '';
         $prevLat = 0;
         $prevLng = 0;
@@ -343,6 +348,7 @@ class OptimizarService {
     }
     
     private function encodeValue($value) {
+        // encode para google maps
         $value <<= 1;
         if ($value < 0) {
             $value = ~$value;
