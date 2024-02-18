@@ -27,4 +27,5 @@ class UsuarioController extends Controller
                     ->paginate();
         return response()->json($usuarios);
     }
+    
 }
