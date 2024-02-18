@@ -13,7 +13,6 @@ return new class extends Migration
     {
          Schema::table('usuarios', function (Blueprint $table) {
             $table->string("actualizacion")->default("")->after('password');
-            $table->string("version")->default("")->after('actualizacion');
         });
     }
 
@@ -24,7 +23,6 @@ return new class extends Migration
     {
         Schema::table('usuarios', function (Blueprint $table) {
             $table->dropColumn("actualizacion");
-            $table->dropColumn("version");
         });
     }
 };
