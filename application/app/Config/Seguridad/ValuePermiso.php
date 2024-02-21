@@ -8,6 +8,7 @@ class ValuePermiso {
     CONST ADMINISTRACION_USUARIOS_ACTUALIZAR_DIFERENTE = 'administracion_usuarios_actualizar_diferente';
     CONST ADMINISTRACION_ITEMS_LISTADO = 'administracion_items_listado';
     CONST ADMINISTRACION_INFORMES_USUARIOS = 'administracion_informes_usuarios';
+    CONST ADMINISTRACION_USURPAR_USUARIOS = 'administracion_usurpar_usuarios';
 
     public static function rolesPermisos(){
         return [
@@ -28,6 +29,11 @@ class ValuePermiso {
             ],
             [
                 'nombre' => self::ADMINISTRACION_INFORMES_USUARIOS,
+                'rider' => false,
+                'administrador' => true,
+            ],
+            [
+                'nombre' => self::ADMINISTRACION_USURPAR_USUARIOS,
                 'rider' => false,
                 'administrador' => true,
             ],

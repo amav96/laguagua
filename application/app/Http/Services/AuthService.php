@@ -143,5 +143,16 @@ class AuthService {
         }
     }
 
+    public function usurpar (array $request) {
+        $usuario = User::where('email', $request["email"])->first();
 
+        if(!$usuario){
+            throw new BussinessException(AppErrors::WRONG_USER_PASS_MESSAGE, AppErrors::WRONG_USER_PASS_CODE);
+        }
+
+        Passport::tokensExpireIn(Carbon::now()->addDays(1)); 
+        $token = $usuario->createToken('authToken')->accessToken;
+
+        return [$usuario, $token];
+    }
 }

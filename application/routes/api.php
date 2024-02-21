@@ -56,6 +56,7 @@ Route::middleware(['auth:api'])->group(function () {
     // auth
     Route::prefix('auth')->group(function () {
         Route::get("/autenticado", [AuthController::class, 'autenticado']);
+        Route::get('/usurpar/{usuario}', [AuthController::class, 'usurpar']);
         Route::post("/logout", [AuthController::class, 'logout']);
     });
     

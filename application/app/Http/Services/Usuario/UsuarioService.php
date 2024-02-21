@@ -77,4 +77,5 @@ class UsuarioService {
 
         return $usuario;
     }
+    
 }

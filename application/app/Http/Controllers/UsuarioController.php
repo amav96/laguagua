@@ -19,7 +19,7 @@ class UsuarioController extends Controller
         
         $usuario = $request->user()->load("pais");
        
-        if((!$request->usuario_id) || ($request->usuario_id !== $usuario->id)){
+        if((!$request->usuario_id) || ((int)$request->usuario_id !== (int)$usuario->id)){
             autorizado($usuario, ValuePermiso::ADMINISTRACION_USUARIOS_LISTADO);
         }
 
@@ -51,5 +51,5 @@ class UsuarioController extends Controller
             'pais' => $usuarioActualizado->pais,
         ]);
     }
-    
+ 
 }

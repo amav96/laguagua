@@ -9,8 +9,8 @@ use App\Http\Services\AuthService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\AuthLoginRequest;
 use App\Http\Requests\Auth\AuthRegisterRequest;
-use App\Http\Requests\Auth\RecuperarPasswordRequest;
 use App\Http\Requests\Auth\VerifyRequest;
+use App\Http\Services\Usuario\UsuarioService;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -21,17 +21,14 @@ class AuthController extends Controller
 
     public function __construct(
         public AuthService $authService,
-    ){
-        $this->permisos = collect(ValuePermiso::rolesPermisos())
-        ->filter(fn($grupo) => $grupo["administrador"] === true)
-        ->map(fn($grupo) => $grupo["nombre"])
-        ->toArray();
-    }
+        public UsuarioService $usuarioService
+    ){}
 
     public function autenticado(Request $request){
         
         $usuario = $request->user()->load(["empresas", "pais"]);
-        $usuario->permisos = $usuario->email === 'alvaroamav96@gmail.com' ? $this->permisos : [];
+        $permisos = $this->usuarioService->permisos($usuario->id);
+        $usuario->permisos = $usuario->email === 'alvaroamav96@gmail.com' ? $permisos : [];
         return response()->json(["autenticado" => $usuario]);
     }
 
@@ -40,13 +37,14 @@ class AuthController extends Controller
         try {
 
             list($usuario, $token) = $this->authService->login($request->all());
+            $permisos = $this->usuarioService->permisos($usuario->id);
+            $usuario->permisos = $usuario->email === 'alvaroamav96@gmail.com' ? $permisos : [];
             
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(), 400);
         }
 
-        $usuario->permisos = $usuario->email === 'alvaroamav96@gmail.com' ? $this->permisos : [];
-
+    
         return response()->json([
             'usuario'   => $usuario,
             'token'     => $token
@@ -124,4 +122,20 @@ class AuthController extends Controller
         return response(['message' => 'You have been successfully logged out!'], 200);
     }
 
+    public function usurpar(User $usuario, Request $request){
+
+        $usuarioAutenticado = $request->user();
+        
+        autorizado($usuarioAutenticado, ValuePermiso::ADMINISTRACION_USURPAR_USUARIOS);
+
+        $data["email"] = $usuario->email;
+
+        list($usuarioUsurpado, $token) = $this->authService->usurpar($data);
+
+        return response()->json([
+            'usuario'   => $usuarioUsurpado,
+            'token'     => $token
+        ]);
+
+    }
 }
