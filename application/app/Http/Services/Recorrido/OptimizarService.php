@@ -57,7 +57,7 @@ class OptimizarService {
             $paradasRestantes = $this->paradas->reject(function ($parada) use ($paradasOptimizar) {
                 return $paradasOptimizar->contains($parada);
             })->values()->sortByDesc('realizado_en');
-
+           
             if($paradasOptimizar->count() <= 25){
                 list($paradasOptimizadas, $distancia, $duracion, $polyline) = $this->GOOGLEOptimizador($paradasOptimizar, $paradasRestantes);
             } else {
@@ -69,6 +69,7 @@ class OptimizarService {
            
             throw new BussinessException(AppErrors::RECORRIDO_OPTIMIZAR_ERROR_MESSAGE, AppErrors::RECORRIDO_OPTIMIZAR_ERROR_CODE);
         }
+
         return [
             $paradasOptimizadas->sortBy('orden')->concat($paradasRestantes)->values(),
             $distancia,
@@ -235,6 +236,7 @@ class OptimizarService {
                 $consumoService =  new ConsumoService();
                 $consumoService->guardarConsumoOptimizar($this->usuarioId, $paradas->count() > 12 ? 0.008 : 0.004);
             }
+
         } catch (\Throwable $th) {
             throw new BussinessException(AppErrors::RECORRIDO_OPTIMIZAR_ERROR_MESSAGE, AppErrors::RECORRIDO_OPTIMIZAR_ERROR_CODE);
         }

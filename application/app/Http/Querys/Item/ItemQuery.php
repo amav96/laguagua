@@ -68,7 +68,14 @@ class ItemQuery {
                 $q->whereHas('parada', function (Builder $query) use($parametros) {
                     $query->where('direccion_formateada', 'LIKE', '%' . $parametros["busqueda"] . '%')
                             ->orWhere('localidad', 'LIKE', '%' . $parametros["busqueda"] . '%');
-                })->orWhere('track_id', 'LIKE', '%' . $parametros["busqueda"] . '%');
+                })
+                ->orWhere('track_id', 'LIKE', '%' . $parametros["busqueda"] . '%')
+                ->orWhereHas('cliente', function (Builder $query) use($parametros) {
+                    $query->Where('numero_documento', $parametros["busqueda"])
+                        ->orWhereHas('clientesNumeros', function (Builder $query) use($parametros) {
+                            $query->where('numero', $parametros["busqueda"] );
+                        });
+                });
             })
             ->orderByRaw('ISNULL(gestionado), gestionado DESC, created_at DESC');
     }

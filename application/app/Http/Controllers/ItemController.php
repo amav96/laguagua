@@ -24,15 +24,18 @@ class ItemController extends Controller
         try {
 
             $usuario = $request->user()->load("pais");
-
-            if($usuario->id !== (int)$request->usuario_id){ 
-                autorizado($request->user(), ValuePermiso::ADMINISTRACION_INFORMES_USUARIOS);
+          
+            if((!$request->creado_por) || $usuario->id !== (int)$request->creado_por){ 
+                autorizado($request->user(), ValuePermiso::ADMINISTRACION_ITEMS_LISTADO);
             }
 
             $parametros = $request->all();
             $parametros["item_id"] = $item_id ?? $request->input("item_id");
             $parametros["time_zone"] = $usuario->pais->time_zone;
-            $parametros["creado_por"] = $usuario->id;
+           
+            if($request->creado_por){
+                $parametros["creado_por"] = $request->creado_por;
+            }
             
             $paradas = $this->itemService->findAll($parametros);
             

@@ -24,10 +24,11 @@ class FindAllItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-           'creado_por' => "required|integer|exists:usuarios,id",
-           "item_id"    => "nullable|integer|exists:items,id",
-           "busqueda"   => "nullable|string|max:100",
-           "track_id"   => "nullable|string|max:100"
+           'creado_por'     => "nullable|integer|exists:usuarios,id",
+           "item_id"        => "nullable|integer|exists:items,id",
+           "empresa_id"     => "nullable|integer",
+           "busqueda"       => "nullable|string|max:100",
+           "track_id"       => "nullable|string|max:100"
         ];
     }
 }

@@ -31,6 +31,10 @@ return new class extends Migration
             $table->index(['nombre']);
             $table->index(['email']);
         });
+
+        Schema::table('clientes_numeros', function (Blueprint $table) {
+            $table->index(['numero']);
+        });
     }
 
     /**
