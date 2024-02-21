@@ -26,7 +26,7 @@ return new class extends Migration
             [
                 "nombre" => "Preparado",
                 "codigo" => "preparado",
-                "color"  => "#ffff52",
+                "color"  => "#FFB133",
             ],
             [
                 "nombre" => "Iniciado",
