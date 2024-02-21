@@ -58,22 +58,19 @@ class ItemQuery {
             ->when(isset($parametros["creado_por"]), function (Builder $q) use($parametros) : void {
                 $q->where('creado_por', $parametros["creado_por"]); 
             })
-            ->when(isset($parametros["track_id"]), function (Builder $q) use($parametros) : void {
-                $q->where('track_id', 'LIKE', '%' . $parametros["track_id"] . '%');
-            })
             // ->when(isset($parametros["busqueda"]), function (Builder $q) use($parametros) : void {
             //     $q->join('paradas', 'items.parada_id', '=', 'paradas.id')
             //     // ->whereRaw("LOWER(paradas.direccion_formateada) COLLATE utf8mb4_general_ci LIKE LOWER(?) COLLATE utf8mb4_general_ci", ['%' . $parametros["busqueda"] . '%']);
             //     ->where('paradas.direccion_formateada', 'LIKE', '%' . $parametros["busqueda"] . '%')
             //     ->orWhere('paradas.localidad', 'LIKE', '%' . $parametros["busqueda"] . '%');
             // })
-            ->orderByRaw('ISNULL(gestionado), gestionado DESC, created_at DESC')
             ->when(isset($parametros["busqueda"]), function (Builder $q) use($parametros) : void {
                 $q->whereHas('parada', function (Builder $query) use($parametros) {
                     $query->where('direccion_formateada', 'LIKE', '%' . $parametros["busqueda"] . '%')
-                          ->orWhere('localidad', 'LIKE', '%' . $parametros["busqueda"] . '%');
-                });
-            });
+                            ->orWhere('localidad', 'LIKE', '%' . $parametros["busqueda"] . '%');
+                })->orWhere('track_id', 'LIKE', '%' . $parametros["busqueda"] . '%');
+            })
+            ->orderByRaw('ISNULL(gestionado), gestionado DESC, created_at DESC');
            
             
            
