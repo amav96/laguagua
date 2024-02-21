@@ -2,30 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Config\Seguridad\ValuePermiso;
+use App\Http\Requests\Usuario\FindAllUsuarioRequest;
+use App\Http\Services\Usuario\UsuarioService;
 
 class UsuarioController extends Controller
 {
-    public function findAll(Request $request){
+
+    public function __construct(
+        public UsuarioService $usuarioService
+    ){}
+
+    public function findAll(FindAllUsuarioRequest $request){
         
         $usuario = $request->user()->load("pais");
-        autorizado($usuario);
+
+        if((!$request->usuario_id) || ($request->usuario_id !== $usuario->id)){
+            autorizado($usuario, ValuePermiso::ADMINISTRACION_USUARIOS_LISTADO);
+        }
+
+        $parametros = $request->all();
+
+        if(isset($request->usuario_id)){
+            $parametros["usuario_id"] = $request->usuario_id;
+        }
         
-        // TODO: poner timezone dinamico por usuario admin
-        $fechaArgentina = now()->setTimezone($usuario->pais->time_zone)->toDateString();
-        $usuarios = User::with(["usuarioConsumo"])
-                    ->withCount(['paradas as paradas_hoy' => function ($query) use($fechaArgentina) {
-                        $query->whereDate('created_at', $fechaArgentina)
-                            ->whereColumn('rider_id', 'usuarios.id')
-                            ->select(DB::raw('COUNT(*)'));
-                    }])
-                    ->withCount(['paradas as paradas_total' => function ($query) {
-                        $query->whereColumn('rider_id', 'usuarios.id')
-                            ->select(DB::raw('COUNT(*)'));
-                    }])
-                    ->paginate();
+        $parametros["time_zone"] = $usuario->pais->time_zone;
+        
+        $usuarios = $this->usuarioService->findAll($parametros);
+       
         return response()->json($usuarios);
     }
     

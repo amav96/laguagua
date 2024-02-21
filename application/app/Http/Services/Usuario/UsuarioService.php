@@ -3,6 +3,8 @@ namespace App\Http\Services\Usuario;
 
 use App\Config\Seguridad\ValuePermiso;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use DB;
 
 class UsuarioService {
 
@@ -17,5 +19,35 @@ class UsuarioService {
         ->filter(fn($grupo) => $grupo["administrador"] === true)
         ->map(fn($grupo) => $grupo["nombre"])
         ->toArray();
+    }
+
+    public function findAll(array $parametros){
+        
+        // TODO: poner timezone dinamico por usuario admin
+        $fechaArgentina = now()->setTimezone($parametros["time_zone"])->toDateString();
+
+        $query = User::query();
+
+        $query = User::with(["usuarioConsumo"])
+                    ->withCount(['paradas as paradas_hoy' => function ($query) use($fechaArgentina) {
+                        $query->whereDate('created_at', $fechaArgentina)
+                            ->whereColumn('rider_id', 'usuarios.id')
+                            ->select(DB::raw('COUNT(*)'));
+                    }])
+                    ->withCount(['paradas as paradas_total' => function ($query) {
+                        $query->whereColumn('rider_id', 'usuarios.id')
+                            ->select(DB::raw('COUNT(*)'));
+                    }])
+                    ->when(isset($parametros["usuario_id"]), function (Builder $q) use($parametros) : void {
+                        $q->where('id', $parametros["usuario_id"]); 
+                    });
+
+        if(isset($parametros["page"])){
+            $query = $query->paginate();
+        } else {
+            $query = $query->get();
+        }
+
+        return $query;
     }
 }

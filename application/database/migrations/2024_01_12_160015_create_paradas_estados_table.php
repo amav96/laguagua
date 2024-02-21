@@ -29,7 +29,7 @@ return new class extends Migration
             [
                 "nombre" => "Preparado",
                 "codigo" => "preparado",
-                "color"  => "",
+                "color"  => "#FFB133",
                 "tipo"   => "positivo",
             ],
             [
