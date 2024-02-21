@@ -6,12 +6,13 @@ use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Models\Recorrido;
 use App\Models\RecorridoEstado;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 class RecorridoService {
 
-    public function findAll(array $parametros, array $permisos = [], int $usuarioAutenticadoId) {
+    public function findAll(array $parametros) {
 
         $query = Recorrido::query();
 
@@ -35,28 +36,30 @@ class RecorridoService {
                 ->when(isset($parametros["rider_id"]), function (Builder $q) use($parametros) : void {
                     $q->where('rider_id', $parametros["rider_id"]); 
                 })
-                ->when(count($permisos) === 0, function (Builder $q) use($parametros, $usuarioAutenticadoId) : void {
-                    $q->where('rider_id', $usuarioAutenticadoId); 
-                })
+              
                 ->orderBy('inicio', 'DESC');
 
         if(isset($parametros["page"])){
             $query = $query->paginate();
-            // TODO: configurar timezone en usuario configuracones
-            $timeZoneFront = "America/Argentina/Buenos_Aires";
-            $items = $query->getCollection()->map(function ($item) use ($timeZoneFront) {
-                $item->inicio = Carbon::parse($item->inicio)->setTimezone($timeZoneFront)->format('d-m-y H:i:s');
-                return $item;
+            $recorridos = $query->getCollection()->map(function ($recorrido) use ($parametros) {
+                return $this->transform($recorrido, $parametros["time_zone"]);
             });
             
-            // Actualizar la colección de la paginación con los items modificados
-            $query->setCollection($items);
+            // Actualizar la colección de la paginación con los recorridos modificados
+            $query->setCollection($recorridos);
         } else {
-            $query = $query->get();
+            $query = $query->get()->map(function($recorrido)use ($parametros) {
+                return $this->transform($recorrido, $parametros["time_zone"]);
+            });
         }
 
         return $query;
 
+    }
+
+    private function transform(Recorrido $recorrido, $timeZoneFront){
+        $recorrido->inicio = Carbon::parse($recorrido->inicio)->setTimezone($timeZoneFront)->format('d-m-y H:i:s');
+        return $recorrido;
     }
 
     private function incluyeParada($parametros)
@@ -74,13 +77,11 @@ class RecorridoService {
         return false; // No se incluyen paradas si ninguno de los elementos del array contiene la palabra "paradas"
     }
 
-    public function create(array $request, int $creadoPor){
+    public function create(array $request, User $usuario){
 
         try {
-  
-            // TODO: configurar timezone en usuario configuracones
-            $timeZoneFront = "America/Argentina/Buenos_Aires";
-            $inicio  = Carbon::parse($request["inicio"], $timeZoneFront)
+            
+            $inicio  = Carbon::parse($request["inicio"], $usuario->pais->time_zone)
             ->setTimezone(config('app.timezone'));
   
             $recorrido = Recorrido::create([
@@ -88,7 +89,7 @@ class RecorridoService {
                 // "empresa_id"            => $request["empresa_id"],
                 "recorrido_estado_id"   => RecorridoEstado::PREPARADO,
                 "inicio"                => $inicio,
-                "creado_por"            => $creadoPor
+                "creado_por"            => $usuario->id
             ]);
 
         } catch (\Throwable $th) {

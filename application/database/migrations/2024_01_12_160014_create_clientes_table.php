@@ -54,22 +54,12 @@ return new class extends Migration
     public function down(): void
     {
 
-        Schema::table('tipos_documentos', function (Blueprint $table) {
+        Schema::table('clientes', function (Blueprint $table) {
             $table->dropForeign(['recorrido_id']);
-        });
-
-        Schema::table('codigos_area', function (Blueprint $table) {
             $table->dropForeign(['codigo_area_id']);
-        });
-
-        Schema::table('empresas', function (Blueprint $table) {
             $table->dropForeign(['empresa_id']);
-        });
-
-        Schema::table('usuarios', function (Blueprint $table) {
             $table->dropForeign(['creado_por']);
         });
-
         Schema::dropIfExists('clientes');
     }
 };

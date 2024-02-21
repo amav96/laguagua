@@ -10,10 +10,11 @@ class UsuarioController extends Controller
 {
     public function findAll(Request $request){
         
-        autorizado($request->user());
-
+        $usuario = $request->user()->load("pais");
+        autorizado($usuario);
+        
         // TODO: poner timezone dinamico por usuario admin
-        $fechaArgentina = now()->setTimezone('America/Argentina/Buenos_Aires')->toDateString();
+        $fechaArgentina = now()->setTimezone($usuario->pais->time_zone)->toDateString();
         $usuarios = User::with(["usuarioConsumo"])
                     ->withCount(['paradas as paradas_hoy' => function ($query) use($fechaArgentina) {
                         $query->whereDate('created_at', $fechaArgentina)
