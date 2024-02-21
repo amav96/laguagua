@@ -7,11 +7,12 @@ use App\Exceptions\BussinessException;
 use App\Models\ParadaEstado;
 use App\Models\Parada;
 use App\Models\Recorrido;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 class ParadaService {
 
-    public function findAll(array $parametros, int $userId,  array $permisos = []) {
+    public function findAll(array $parametros) {
 
         $query = Parada::query();
         $query = $query
@@ -21,18 +22,38 @@ class ParadaService {
                 ->when(isset($parametros["parada_id"]), function (Builder $q) use($parametros) : void {
                     $q->where('id', $parametros["parada_id"]); 
                 })
-                ->when(count($permisos) === 0, function (Builder $q) use($parametros, $userId) : void {
-                    $q->where('rider_id', $userId); 
+                ->when(isset($parametros["rider_id"]), function (Builder $q) use($parametros) : void {
+                    $q->where('rider_id', $parametros["rider_id"]); 
                 });
+                
+        return $this->transform(isset($parametros["page"]) ?  $query->paginate() : $query->get(), $parametros["time_zone"]);
+    }
 
-        if(isset($parametros["page"])){
-            $query = $query->paginate();
+    private function transform($items, string $timeZone){
+        if ($items instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) {
+            $items->getCollection()->transform(function($parada) use($timeZone){
+                $parada->items = $parada->items->map(function($item) use($timeZone) {
+                    if(!$item->gestionado){
+                        return $item;
+                    }
+                    $item->gestionado_formateado = Carbon::parse($item->gestionado)->setTimezone($timeZone)->format('d-m-y H:i:s');
+                    return $item;
+                });
+                return $parada;
+            });
         } else {
-            $query = $query->get();
+            $items->transform(function($parada) use($timeZone){
+                $parada->items = $parada->items->map(function($item) use($timeZone) {
+                    if(!$item->gestionado){
+                        return $item;
+                    }
+                    $item->gestionado_formateado = Carbon::parse($item->gestionado)->setTimezone($timeZone)->format('d-m-y H:i:s');
+                    return $item;
+                });
+                return $parada;
+            });
         }
-
-        return $query;
-
+        return $items;
     }
 
     public function create(array $request) : Parada {

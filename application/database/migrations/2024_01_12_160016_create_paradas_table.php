@@ -53,19 +53,11 @@ return new class extends Migration
     public function down(): void
     {
 
-        Schema::table('recorridos', function (Blueprint $table) {
+        Schema::table('paradas', function (Blueprint $table) {
             $table->dropForeign(['recorrido_id']);
-        });
-        
-        Schema::table('paradas_estados', function (Blueprint $table) {
             $table->dropForeign(['parada_estado_id']);
         });
-
-
-        Schema::table('items_proveedores', function (Blueprint $table) {
-            $table->dropForeign(['item_proveedor_id']);
-        });
-
+        
         Schema::dropIfExists('paradas');
     }
 };

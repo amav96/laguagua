@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::table('usuarios', function (Blueprint $table) {
-            $table->string("actualizacion")->default("")->after('password');
-            $table->string("version")->default("")->after('actualizacion');
+      
+        Schema::table('items', function (Blueprint $table) {
+            $table->renameColumn('entregado', 'gestionado');
         });
     }
 
@@ -22,9 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('usuarios', function (Blueprint $table) {
-            $table->dropColumn("actualizacion");
-            $table->dropColumn("version");
+        Schema::table('items', function (Blueprint $table) {
+            $table->renameColumn('gestionado', 'entregado');
         });
     }
 };

@@ -41,9 +41,9 @@ class Parada extends Model
         return $this->hasOne(ParadaEstado::class, "id", "parada_estado_id");
     }
 
-    public function items(): BelongsToMany
+    public function items(): hasMany
     {
-        return $this->belongsToMany(Item::class, 'paradas_items', 'parada_id', 'item_id');
+        return $this->hasMany(Item::class, "parada_id", "id");
     }
 
     public function comprobantes() : HasMany {

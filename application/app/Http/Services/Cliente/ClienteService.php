@@ -47,7 +47,6 @@ class ClienteService {
                 "tipo_documento_id" => $request["tipo_documento_id"] ?? null,
                 "numero_documento" => isset($request["numero_documento"]) ? trim($request["numero_documento"]) : null,
                 "nombre" => isset($request["nombre"]) ? trim($request["nombre"]) : null,
-                "empresa_id" => $request["empresa_id"] ?? null,
                 "observaciones" => $request["observaciones"] ?? null,
                 "creado_por" => $usuarioId
             ]);

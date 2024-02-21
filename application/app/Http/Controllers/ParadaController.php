@@ -19,11 +19,12 @@ class ParadaController extends Controller
 
         try {
        
+            $usuario = $request->user();
             $parametros = $request->all();
             $parametros["parada_id"] = $parada_id ?? $request->input("parada_id");
+            $parametros["rider_id"] = $usuario->id;
+            $parametros["time_zone"] = $usuario->pais->time_zone;
             
-            $usuario = $request->user();
-
             if(!isset($request["parada_id"])){
                 // TODO: solo permitir a admin o autorizados para traer todas las paradas
                 return response()->json([]);
@@ -32,8 +33,8 @@ class ParadaController extends Controller
             if(isset($request["parada_id"])){
                 $this->validarParadaPerteneceUsuario($usuario->id, $parametros["parada_id"]);
             } 
-
-            $paradas = $this->paradaService->findAll($parametros, userId: $usuario->id , permisos: []);
+           
+            $paradas = $this->paradaService->findAll($parametros);
             
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(), 404);

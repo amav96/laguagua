@@ -60,4 +60,9 @@ class Item extends Model
         return $this->hasMany(ItemComprobante::class, 'item_id', 'id');
     }
 
+    public function parada()
+    {
+        return $this->belongsTo(Parada::class);
+    }
+
 }

@@ -46,13 +46,11 @@ class RecorridoController extends Controller
             $parametros = $request->all();
     
             $parametros["recorrido_id"] = $recorrido_id ?? $request->input("recorrido_id");
-            $usuario = $request->user();
+            $usuario = $request->user()->load("pais");
+            $parametros["rider_id"] = $usuario->id;
+            $parametros["time_zone"] = $usuario->pais->time_zone;
 
-            $recorridos = $this->recorridoService->findAll(
-                parametros: $parametros, 
-                permisos: [],
-                usuarioAutenticadoId: $usuario->id , 
-            );
+            $recorridos = $this->recorridoService->findAll(parametros: $parametros);
             
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(), 404);
@@ -63,7 +61,7 @@ class RecorridoController extends Controller
 
     public function create(SaveRecorridoRequest $request){
 
-        $usuarioAutenticado = $request->user();
+        $usuarioAutenticado = $request->user()->load("pais");
 
         $usuarioId = $request->rider_id;
 
@@ -83,7 +81,7 @@ class RecorridoController extends Controller
                 "inicio"        => $request->input("inicio"),
             ];
 
-            $recorrido = $this->recorridoService->create($data, $usuarioAutenticado->id);
+            $recorrido = $this->recorridoService->create($data, $usuarioAutenticado);
 
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(), $e->getInternalCode() === AppErrors::EMPRESA_USER_NOT_EXISTS_CODE ? 404 : 400);

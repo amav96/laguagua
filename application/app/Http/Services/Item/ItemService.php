@@ -4,34 +4,37 @@ namespace App\Http\Services\Item;
 
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
+use App\Http\Querys\Item\ItemQuery;
 use App\Http\Services\Parada\ParadaService;
 use App\Models\ItemEstado;
 use App\Models\Item;
 use App\Models\Parada;
-use App\Models\ParadaItem;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 class ItemService {
 
-    public function findAll(array $parametros, int $userId,  array $permisos = []) {
+    public function findAll(array $parametros) {
+        $query = (new ItemQuery)->findAll($parametros);
+        return $this->transform(isset($parametros["page"]) ?  $query->paginate() : $query->get(), $parametros["time_zone"]);
+   }
 
-        $query = Item::query();
-        $query = $query
-                ->when(isset($parametros["incluir"]), function (Builder $q) use($parametros) : void {
-                    $q->with($parametros["incluir"]);
-                })
-                ->when(isset($parametros["item_id"]), function (Builder $q) use($parametros) : void {
-                    $q->where('id', $parametros["item_id"]); 
-                });
+    private function transform($items, string $timeZone){
+        if ($items instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) {
+            $items->getCollection()->transform(function($item) use($timeZone){
 
-        if(isset($parametros["page"])){
-            $query = $query->paginate();
-        } else {
-            $query = $query->get();
+                $item->gestionado_transformado = $item->gestionado ? Carbon::parse($item->gestionado)->setTimezone($timeZone)->format('d-m-y H:i:s') : null;
+                $item->created_at_transformado = Carbon::parse($item->created_at)->setTimezone($timeZone)->format('d-m-y H:i:s');
+                return $item;
+            });
+        } elseif ($items instanceof \Illuminate\Support\Collection) {
+            $items->transform(function($item) use($timeZone){
+                $item->gestionado_transformado = $item->gestionado ? Carbon::parse($item->gestionado)->setTimezone($timeZone)->format('d-m-y H:i:s') : null;
+                $item->created_at_transformado = Carbon::parse($item->created_at)->setTimezone($timeZone)->format('d-m-y H:i:s');
+                return $item;
+            });
         }
-
-        return $query;
-
+        return $items;
     }
 
     public function create(array $request, int $creadoPor) : Item{
@@ -55,15 +58,9 @@ class ItemService {
                 "track_id"              => $request["track_id"] ?? null,
                 "cliente_id"            => $request["cliente_id"] ?? null,
                 "destinatario"          => $request["destinatario"] ?? null,
-                "creado_por"           => $creadoPor
+                "parada_id"             => isset($request["parada_id"]) ? $request["parada_id"] : null,
+                "creado_por"            => $creadoPor
             ]);
-
-            if(isset($request["parada_id"])){
-                ParadaItem::create([
-                    "item_id"   => $item->id,
-                    "parada_id" => $request["parada_id"]
-                ]);
-            }
 
         } catch (\Throwable $th) {
             rollBack();
@@ -92,6 +89,7 @@ class ItemService {
                 "empresa_id"            => $request["empresa_id"],
                 "item_estado_id"        => $request["item_estado_id"],
                 "track_id"              => $request["track_id"] ?? $item->track_id,
+                "cliente_id"            => $request["cliente_id"] ?? null,
                 "destinatario"          => $request["destinatario"] ?? $item->destinatario,
             ]);
     
@@ -118,6 +116,10 @@ class ItemService {
         beginTransaction();
         try {
             $item->item_estado_id = $request["item_estado_id"];
+            if($request["item_estado_id"] !== ItemEstado::PREPARADO){
+                $item->gestionado = Carbon::parse(now(), $request["time_zone"])
+                ->setTimezone(config('app.timezone'));
+            }
             $item->save();
 
             $itemActualizado = $item->load([
@@ -136,7 +138,6 @@ class ItemService {
 
         } catch (\Throwable $th) {
             rollBack();
-
             throw new BussinessException(AppErrors::ITEM_ACTUALIZAR_ERROR_MESSAGE, AppErrors::ITEM_ACTUALIZAR_ERROR_CODE);
         }
 
@@ -146,15 +147,4 @@ class ItemService {
         return $itemActualizado;
     }
 
-    private function validarItemDuplicado(array $request){
-        if(isset($request["track_id"]) &&  Item::where("item_proveedor_id", $request["item_proveedor_id"])
-                ->where("empresa_id", $request["empresa_id"])
-                ->where("track_id", $request["track_id"])
-                ->exists()){
-            
-            throw new BussinessException(AppErrors::ITEM_CREAR_DUPLICADO_ERROR_MESSAGE, AppErrors::ITEM_CREAR_DUPLICADO_ERROR_CODE);
-        }
-    }
-
-  
 }

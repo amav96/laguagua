@@ -71,14 +71,7 @@ return new class extends Migration
 
         Schema::table('recorridos', function (Blueprint $table) {
             $table->dropForeign(['empresa_id']);
-        });
-
-
-        Schema::table('usuarios', function (Blueprint $table) {
             $table->dropForeign(['rider_id']);
-        });
-
-        Schema::table('recorridos_estados', function (Blueprint $table) {
             $table->dropForeign(['recorrido_estado_id']);
         });
 

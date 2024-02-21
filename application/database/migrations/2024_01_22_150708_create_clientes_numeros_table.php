@@ -48,13 +48,11 @@ return new class extends Migration
     public function down(): void
     {
 
-        Schema::table('codigos_area', function (Blueprint $table) {
+        Schema::table('clientes_numeros', function (Blueprint $table) {
             $table->dropForeign(['codigo_area_id']);
-        });
-
-        Schema::table('clientes', function (Blueprint $table) {
             $table->dropForeign(['cliente_id']);
         });
+
 
         Schema::dropIfExists('clientes_numeros');
     }

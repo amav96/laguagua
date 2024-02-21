@@ -10,12 +10,14 @@ use App\Http\Controllers\ItemEstadoController;
 use App\Http\Controllers\ParadaEstadoController;
 use App\Http\Controllers\RecorridoEstadoController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ItemInformeController;
 use App\Http\Controllers\ItemTipoController;
 use App\Http\Controllers\PaisController;
 use App\Http\Controllers\ParadaComprobanteController;
 use App\Http\Controllers\ParadaController;
 use App\Http\Controllers\ProveedorItemController;
 use App\Http\Controllers\RecorridoController;
+use App\Http\Controllers\Informes\Item\InformeItemGestionController;
 use App\Http\Controllers\TipoDocumentoController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
@@ -95,6 +97,10 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('', [ItemController::class, 'create']);
         Route::put('{item}', [ItemController::class, 'update']);
         Route::patch('/estado/{item}', [ItemController::class, 'updateEstado']);
+    });
+    Route::prefix('informes-items')->group(function () {
+        Route::post('/gestion', [InformeItemGestionController::class, 'gestion']);
+        Route::post('/gestion/excel', [InformeItemGestionController::class, 'gestionExcel']);
     });
 
     // comprobantes items

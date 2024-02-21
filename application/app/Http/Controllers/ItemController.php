@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Config\Seguridad\ValuePermiso;
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
+use App\Http\Requests\Item\FindAllItemRequest;
+use App\Http\Requests\Item\InformeExcelItemRequest;
 use App\Http\Requests\Item\SaveItemRequest;
 use App\Http\Services\Item\ItemService;
 use App\Http\Services\Parada\ParadaService;
@@ -17,21 +20,22 @@ class ItemController extends Controller
         public ItemService $itemService
     ){}
 
-    public function findAll(Request $request, int $item_id = null){
+    public function findAll(FindAllItemRequest $request, int $item_id = null){
 
         try {
-       
-            $parametros = $request->all();
-            $parametros["item_id"] = $item_id ?? $request->input("item_id");
-            
-            $usuario = $request->user();
 
-            if(!isset($request["item_id"])){
-                // TODO: solo permitir a admin o autorizados para traer todos los items
-                return response()->json([]);
+            $usuario = $request->user()->load("pais");
+
+            if($usuario->id !== (int)$request->usuario_id){ 
+                autorizado($request->user(), ValuePermiso::ADMINISTRACION_INFORMES_USUARIOS);
             }
 
-            $paradas = $this->itemService->findAll($parametros, userId: $usuario->id , permisos: []);
+            $parametros = $request->all();
+            $parametros["item_id"] = $item_id ?? $request->input("item_id");
+            $parametros["time_zone"] = $usuario->pais->time_zone;
+            $parametros["creado_por"] = $usuario->id;
+            
+            $paradas = $this->itemService->findAll($parametros);
             
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(), 404);
@@ -82,11 +86,13 @@ class ItemController extends Controller
 
         try {
 
-            $usuario = $request->user();
+            $usuario = $request->user()->load('pais');
+            $data = $request->all();
+            $data["time_zone"] = $usuario->pais->time_zone;
 
             $this->validarCreadorItem($usuario->id, $item);
 
-            $actualizarItem = $this->itemService->updateEstado($item, $request->all());
+            $actualizarItem = $this->itemService->updateEstado($item, $data);
 
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(),  400);
@@ -106,4 +112,6 @@ class ItemController extends Controller
             throw new BussinessException(AppErrors::ITEM_NO_PERTECE_USUARIO_MESSAGE, AppErrors::ITEM_NO_PERTECE_USUARIO_CODE);
         }
     }
+
+
 }

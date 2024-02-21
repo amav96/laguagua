@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Config\Seguridad\ValuePermiso;
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Http\Services\AuthService;
@@ -15,14 +16,22 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
+    
+    public $permisos = [];
 
     public function __construct(
         public AuthService $authService,
-    )
-    {}
+    ){
+        $this->permisos = collect(ValuePermiso::rolesPermisos())
+        ->filter(fn($grupo) => $grupo["administrador"] === true)
+        ->map(fn($grupo) => $grupo["nombre"])
+        ->toArray();
+    }
 
     public function autenticado(Request $request){
+        
         $usuario = $request->user()->load(["empresas", "pais"]);
+        $usuario->permisos = $usuario->email === 'alvaroamav96@gmail.com' ? $this->permisos : [];
         return response()->json(["autenticado" => $usuario]);
     }
 
@@ -35,6 +44,8 @@ class AuthController extends Controller
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(), 400);
         }
+
+        $usuario->permisos = $usuario->email === 'alvaroamav96@gmail.com' ? $this->permisos : [];
 
         return response()->json([
             'usuario'   => $usuario,

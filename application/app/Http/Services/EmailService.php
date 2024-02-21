@@ -49,7 +49,7 @@ class EmailService
         } catch (Exception $e) {
             $sent = false;
             Log::error('Error al enviar el correo: ' . $e->getMessage());
-            throw new BussinessException(AppErrors::RECORRIDO_INFORME_NO_ENVIADO_MESSAGE, AppErrors::RECORRIDO_INFORME_NO_ENVIADO_CODE);
+            throw new BussinessException(AppErrors::EMAIL_NO_ENVIADO_MESSAGE, AppErrors::EMAIL_NO_ENVIADO_CODE);
         }
 
         return $sent;
