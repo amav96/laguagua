@@ -21,6 +21,7 @@ class ItemService {
 
     private function transform($items, string $timeZone){
         if ($items instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) {
+           
             $items->getCollection()->transform(function($item) use($timeZone){
 
                 $item->gestionado_transformado = $item->gestionado ? Carbon::parse($item->gestionado)->setTimezone($timeZone)->format('d-m-y H:i:s') : null;
