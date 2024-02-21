@@ -71,9 +71,5 @@ class ItemQuery {
                 })->orWhere('track_id', 'LIKE', '%' . $parametros["busqueda"] . '%');
             })
             ->orderByRaw('ISNULL(gestionado), gestionado DESC, created_at DESC');
-           
-            
-           
-
     }
 }

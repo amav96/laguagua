@@ -120,6 +120,7 @@ Route::middleware(['auth:api'])->group(function () {
      // Usuarios
      Route::prefix('usuarios')->group(function () {
         Route::get('', [UsuarioController::class, 'findAll']);
+        Route::patch('{usuario}', [UsuarioController::class, 'update']);
     });
 
     // Empresas

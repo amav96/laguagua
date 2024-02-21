@@ -2,6 +2,8 @@
 namespace App\Http\Services\Usuario;
 
 use App\Config\Seguridad\ValuePermiso;
+use App\Exceptions\AppErrors;
+use App\Exceptions\BussinessException;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use DB;
@@ -40,6 +42,9 @@ class UsuarioService {
                     }])
                     ->when(isset($parametros["usuario_id"]), function (Builder $q) use($parametros) : void {
                         $q->where('id', $parametros["usuario_id"]); 
+                    })
+                    ->when(isset($parametros["incluir"]), function (Builder $q) use($parametros) : void {
+                        $q->with($parametros["incluir"]);
                     });
 
         if(isset($parametros["page"])){
@@ -49,5 +54,27 @@ class UsuarioService {
         }
 
         return $query;
+    }
+
+    public function update(User $usuario, array $request) : User{
+        beginTransaction();
+        try {
+
+            $usuario->fill([
+                "nombre"            => $request["nombre"],
+                "pais_id"           => (int)$request["pais_id"],
+            ]);
+    
+            $usuario->save();
+
+        } catch (\Throwable $th) {
+            rollBack();
+            
+            throw new BussinessException(AppErrors::USUARIO_ACTUALIZAR_ERROR_MESSAGE, AppErrors::USUARIO_ACTUALIZAR_ERROR_CODE);
+        }
+
+        commit();
+
+        return $usuario;
     }
 }
