@@ -58,25 +58,25 @@ return new class extends Migration
             [
                 "nombre"    => "No responde",
                 "codigo"    => "no-responde",
-                "color"     => "",
+                "color"     => "#F31B1B",
                 "tipo"      => "negativo"
             ],
             [
                 "nombre"    => "Dirección incorrecta",
                 "codigo"    => "direccion-incorrecta",
-                "color"     => "",
+                "color"     => "#F31B1B",
                 "tipo"      => "negativo"
             ],
             [
                 "nombre"    => "Faltan datos",
                 "codigo"    => "faltan-datos",
-                "color"     => "",
+                "color"     => "#F31B1B",
                 "tipo"      => "negativo"
             ],
             [
                 "nombre"    => "Rechazado",
                 "codigo"    => "rechazado",
-                "color"     => "",
+                "color"     => "#F31B1B",
                 "tipo"      => "negativo"
             ],
         ]);
