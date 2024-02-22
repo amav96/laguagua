@@ -57,14 +57,13 @@ return new class extends Migration
             "time_zone" => "Europe/Madrid"
         ]);
 
-        Schema::table('usuarios', function (Blueprint $table) {
-            $table->integer('pais_id')->default(1)->change();
-        });
-
         User::whereNull("pais_id")->update([
             "pais_id" => 1
         ]);
 
+        Schema::table('usuarios', function (Blueprint $table) {
+            $table->integer('pais_id')->default(1)->change();
+        });
     }
 
     /**
