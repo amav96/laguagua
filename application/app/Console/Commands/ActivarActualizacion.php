@@ -28,7 +28,7 @@ class ActivarActualizacion extends Command
     public function handle()
     {
         DB::table('usuarios')->update([
-            "actualizacion" => 'https://play.google.com/apps/internaltest/4701325107361853033',
+            "actualizacion" => 'https://play.google.com/store/apps/details?id=ruteador.flex.app&hl=en-US&ah=J-lLximHRcxPlAFPtl-p-JATGgI ',
             "version"   => env("NUEVA_VERSION")   
         ]);
     }

@@ -22,12 +22,20 @@ class AuthService {
 
         try {
 
-            $usuario = User::create([
+            $config = config('app.values');
+
+            $usuarioData = [
                 'nombre'            => $request['nombre'],
                 'email'             => $request['email'],
                 'password'          => Hash::make($request['password']),
-                'pais_id'           => $request['pais_id']
-            ]);
+                'pais_id'           => $request['pais_id'],
+            ];
+
+            if(isset($config["NUEVA_VERSION"])){
+                $usuarioData["version"] = $config["NUEVA_VERSION"];
+            }
+
+            $usuario = User::create($usuarioData);
 
             UsuarioEmpresa::create([
                 "usuario_id"    => $usuario->id,
@@ -89,13 +97,22 @@ class AuthService {
        
         try {
 
-            $usuario = User::create([
+            $config = config('app.values');
+
+            $usuarioData = [
                 'email'             => $request['email'],
-            ]);
+            ];
+
+            if(isset($config["NUEVA_VERSION"])){
+                $usuarioData["version"] = $config["NUEVA_VERSION"];
+            }
+
+            $usuario = User::create($usuarioData);
 
             UsuarioEmpresa::create([
                 "usuario_id"    => $usuario->id,
-                "empresa_id"    => 1
+                "empresa_id"    => 1,
+                
             ]);
 
             Passport::personalAccessTokensExpireIn(Carbon::now()->addDays(1));
