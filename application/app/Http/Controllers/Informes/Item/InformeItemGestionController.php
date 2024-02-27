@@ -9,6 +9,7 @@ use App\Http\Querys\Item\ItemQuery;
 use App\Http\Requests\Item\InformeExcelItemRequest;
 use App\Http\Services\Item\ItemService;
 use App\Http\Controllers\Controller;
+use App\Http\Services\ConsumoService;
 use App\Http\Services\EmailService;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -71,7 +72,8 @@ class InformeItemGestionController extends Controller
         try {
             $data = $this->constructor($request);
            
-            $filename = 'gestion_' . Str::random(10) . '.xlsx'; // Generar un nombre único para el archivo
+            $nombreUsuario = isset($data["usuario"]["nombre"]) ? $data["usuario"]["nombre"] : explode('@', $data["usuario"]["email"])[0];
+            $filename = Str::random(5) . '' .$nombreUsuario.'-'.now()->format('Y-m-d').'.xlsx'; // Generar un nombre único para el archivo
             $path = 'informes/items/' . $filename; // Ruta en la que se guardará el archivo en S3
             $export = new ReporteItemGestionExport($data, $filename);
 
@@ -81,8 +83,10 @@ class InformeItemGestionController extends Controller
                 // 'Expires' => time() + 60 * 1, // 1 minutos
             ]);
             
-            
             $url = Storage::url($path); // Obtener la URL del archivo almacenado
+
+            $consumoService =  new ConsumoService();
+            $consumoService->guardarConsumoInforme($request->creado_por);
 
             return response()->json(['url' => $url]); 
             

@@ -10,7 +10,6 @@ use App\Http\Controllers\ItemEstadoController;
 use App\Http\Controllers\ParadaEstadoController;
 use App\Http\Controllers\RecorridoEstadoController;
 use App\Http\Controllers\ItemController;
-use App\Http\Controllers\ItemInformeController;
 use App\Http\Controllers\ItemTipoController;
 use App\Http\Controllers\PaisController;
 use App\Http\Controllers\ParadaComprobanteController;
