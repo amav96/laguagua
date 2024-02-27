@@ -73,7 +73,7 @@ class InformeItemGestionController extends Controller
             $data = $this->constructor($request);
            
             $nombreUsuario = isset($data["usuario"]["nombre"]) ? $data["usuario"]["nombre"] : explode('@', $data["usuario"]["email"])[0];
-            $filename = Str::random(5) . '' .$nombreUsuario.'-'.now()->format('Y-m-d').'.xlsx'; // Generar un nombre único para el archivo
+            $filename = Str::random(5) . '-' .$nombreUsuario.'-'.now()->format('Y-m-d').'.xlsx'; // Generar un nombre único para el archivo
             $path = 'informes/items/' . $filename; // Ruta en la que se guardará el archivo en S3
             $export = new ReporteItemGestionExport($data, $filename);
 
