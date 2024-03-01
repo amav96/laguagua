@@ -29,7 +29,8 @@ class User extends Authenticatable
         'nombre',
         'email',
         'password',
-        'pais_id'
+        'pais_id',
+        'rol_id'
     ];
 
     /**
@@ -67,6 +68,10 @@ class User extends Authenticatable
     public function paradas()
     {
         return $this->hasMany(Parada::class, 'rider_id', 'id');
+    }
+
+    public function rol() : BelongsTo {
+        return $this->belongsTo(Rol::class, 'rol_id', 'id');
     }
 }
 

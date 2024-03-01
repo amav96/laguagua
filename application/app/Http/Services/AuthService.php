@@ -4,6 +4,8 @@ namespace App\Http\Services;
 
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
+use App\Models\Empresa;
+use App\Models\Rol;
 use App\Models\User;
 use App\Models\UsuarioEmpresa;
 use Carbon\Carbon;
@@ -29,6 +31,7 @@ class AuthService {
                 'email'             => $request['email'],
                 'password'          => Hash::make($request['password']),
                 'pais_id'           => $request['pais_id'],
+                'rol_id'           => $request['rol_id'],
             ];
 
             if(isset($config["NUEVA_VERSION"])){
@@ -37,12 +40,13 @@ class AuthService {
 
             $usuario = User::create($usuarioData);
 
-            UsuarioEmpresa::create([
-                "usuario_id"    => $usuario->id,
-                "empresa_id"    => 1
-            ]);
+            if($request['rol_id'] === Rol::RIDER){
+                UsuarioEmpresa::create([
+                    "usuario_id"    => $usuario->id,
+                    "empresa_id"    => Empresa::INDEPENDIENTE
+                ]);
+            }
 
-    
             Passport::personalAccessTokensExpireIn(Carbon::now()->addDays(1));
             $token = $usuario->createToken('authToken')->accessToken;
             
