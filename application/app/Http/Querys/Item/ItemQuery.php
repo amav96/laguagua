@@ -28,8 +28,8 @@ class ItemQuery {
                 ->when(isset($parametros["empresa_id"]), function (Builder $q) use($parametros) : void {
                     $q->where('empresa_id', $parametros["empresa_id"]); 
                 })
-                ->when(isset($parametros["creado_por"]), function (Builder $q) use($parametros) : void {
-                    $q->where('creado_por', $parametros["creado_por"]); 
+                ->when(isset($parametros["rider_id"]), function (Builder $q) use($parametros) : void {
+                    $q->where('rider_id', $parametros["rider_id"]); 
                 });
     }
 
@@ -55,8 +55,8 @@ class ItemQuery {
                 $fechaFin = Carbon::parse($parametros["fecha_fin"])->format('Y-m-d');
                 $q->whereRaw("DATE(CONVERT_TZ(created_at, 'UTC', '{$timeZone}')) <= ?", [$fechaFin]); 
             })
-            ->when(isset($parametros["creado_por"]), function (Builder $q) use($parametros) : void {
-                $q->where('creado_por', $parametros["creado_por"]); 
+            ->when(isset($parametros["rider_id"]), function (Builder $q) use($parametros) : void {
+                $q->where('rider_id', $parametros["rider_id"]); 
             })
             // ->when(isset($parametros["busqueda"]), function (Builder $q) use($parametros) : void {
             //     $q->join('paradas', 'items.parada_id', '=', 'paradas.id')

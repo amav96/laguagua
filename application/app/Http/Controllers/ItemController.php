@@ -25,7 +25,7 @@ class ItemController extends Controller
 
             $usuario = $request->user()->load("pais");
           
-            if((!$request->creado_por) || $usuario->id !== (int)$request->creado_por){ 
+            if((!$request->rider_id) || $usuario->id !== (int)$request->rider_id){ 
                 autorizado($request->user(), ValuePermiso::ADMINISTRACION_ITEMS_LISTADO);
             }
 
@@ -33,8 +33,8 @@ class ItemController extends Controller
             $parametros["item_id"] = $item_id ?? $request->input("item_id");
             $parametros["time_zone"] = $usuario->pais->time_zone;
            
-            if($request->creado_por){
-                $parametros["creado_por"] = $request->creado_por;
+            if($request->rider_id){
+                $parametros["rider_id"] = $request->rider_id;
             }
             
             $paradas = $this->itemService->findAll($parametros);
@@ -110,7 +110,7 @@ class ItemController extends Controller
     }
 
     private function validarCreadorItem(int $usuarioId, Item $item){
-        if($usuarioId !== $item->creado_por){
+        if($usuarioId !== $item->rider_id){
             throw new BussinessException(AppErrors::ITEM_NO_PERTECE_USUARIO_MESSAGE, AppErrors::ITEM_NO_PERTECE_USUARIO_CODE);
         }
     }
