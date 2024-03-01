@@ -38,7 +38,7 @@ class ItemService {
         return $items;
     }
 
-    public function create(array $request, int $creadoPor) : Item{
+    public function create(array $request, int $riderId) : Item{
 
 
         $itemEstadoId = isset($request["item_estado_id"]) 
@@ -60,11 +60,13 @@ class ItemService {
                 "cliente_id"            => $request["cliente_id"] ?? null,
                 "destinatario"          => $request["destinatario"] ?? null,
                 "parada_id"             => isset($request["parada_id"]) ? $request["parada_id"] : null,
-                "creado_por"            => $creadoPor
+                
+                "rider_id"              => $riderId
             ]);
 
         } catch (\Throwable $th) {
             rollBack();
+           
             throw new BussinessException(AppErrors::ITEM_CREAR_ERROR_MESSAGE, AppErrors::ITEM_CREAR_ERROR_CODE);
         }
 

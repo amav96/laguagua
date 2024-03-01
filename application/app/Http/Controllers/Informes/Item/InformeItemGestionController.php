@@ -27,11 +27,11 @@ class InformeItemGestionController extends Controller
         $parametros = $request->all();
        
         $usuarioAutenticado = $request->user();
-        if($usuarioAutenticado->id !== $request->creado_por){
+        if($usuarioAutenticado->id !== $request->rider_id){
             autorizado($request->user(), ValuePermiso::ADMINISTRACION_INFORMES_USUARIOS);
         }
-        $usuario = User::find($request->creado_por)->load("pais");
-        $parametros["creado_por"] = $usuario->id;
+        $usuario = User::find($request->rider_id)->load("pais");
+        $parametros["rider_id"] = $usuario->id;
         $parametros["time_zone"] = $usuario->pais->time_zone;
     
         $items = $this->itemService->findAll($parametros);
@@ -86,7 +86,7 @@ class InformeItemGestionController extends Controller
             $url = Storage::url($path); // Obtener la URL del archivo almacenado
 
             $consumoService =  new ConsumoService();
-            $consumoService->guardarConsumoInforme($request->creado_por);
+            $consumoService->guardarConsumoInforme($request->rider_id);
 
             return response()->json(['url' => $url]); 
             

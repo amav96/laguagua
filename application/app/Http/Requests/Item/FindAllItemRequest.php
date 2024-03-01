@@ -24,7 +24,7 @@ class FindAllItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-           'creado_por'     => "nullable|integer|exists:usuarios,id",
+           'rider_id'     => "nullable|integer|exists:usuarios,id",
            "item_id"        => "nullable|integer|exists:items,id",
            "empresa_id"     => "nullable|integer",
            "busqueda"       => "nullable|string|max:100",

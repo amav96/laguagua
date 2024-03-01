@@ -24,7 +24,7 @@ class InformeExcelItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "creado_por"    => "required|exists:usuarios,id",
+            "rider_id"    => "required|exists:usuarios,id",
             "fecha_inicio"  => "required|date",
             "fecha_fin"     => "required|date",
             "page"          => "nullable|integer",

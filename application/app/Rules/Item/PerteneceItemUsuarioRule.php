@@ -20,7 +20,7 @@ class PerteneceItemUsuarioRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $usuarioAutenticado = request()->user();
-        if(!Item::where("id", $value)->where('creado_por', $usuarioAutenticado->id)->exists()){
+        if(!Item::where("id", $value)->where('rider_id', $usuarioAutenticado->id)->exists()){
             $this->setCustomValidation(true);
             $this->setCustomCode(AppErrors::ITEM_NO_PERTECE_USUARIO_CODE);
             $this->setCustomMessage(AppErrors::ITEM_NO_PERTECE_USUARIO_MESSAGE);
