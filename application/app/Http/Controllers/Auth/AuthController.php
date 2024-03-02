@@ -26,9 +26,8 @@ class AuthController extends Controller
 
     public function autenticado(Request $request){
         
-        $usuario = $request->user()->load(["empresas", "pais"]);
-        $permisos = $this->usuarioService->permisos($usuario->id);
-        $usuario->permisos = $usuario->email === 'alvaroamav96@gmail.com' ? $permisos : [];
+        $usuario = $request->user()->load(["empresas", "pais","rol"]);
+        $usuario->permisos = $this->usuarioService->permisos($usuario->id);
         return response()->json(["autenticado" => $usuario]);
     }
 

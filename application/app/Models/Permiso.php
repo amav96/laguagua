@@ -5,17 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Empresa extends Model
+class Permiso extends Model
 {
     use HasFactory;
-
-    const INDEPENDIENTE = 1;
 
      /**
      * Table name.
      * @var string.
      */
-    protected $table = 'empresas';
+    protected $table = 'permisos';
 
     /**
      * Table primary key.
@@ -28,7 +26,7 @@ class Empresa extends Model
      * @var bool.
      */
     public $incrementing = true;
-    
+
     /**
      * @var array.
      */

@@ -31,7 +31,8 @@ class AuthRegisterRequest extends FormRequest
             'nombre' => 'required|string',
             'email' => 'required|email|unique:usuarios',
             'password' => 'required|min:6|string',
-            'pais_id'   => 'required|integer|exists:paises,id'
+            'pais_id'   => 'required|integer|exists:paises,id',
+            'rol_id'   => 'required|integer|exists:roles,id'
         ];
     }
 }

@@ -11,16 +11,18 @@ use DB;
 class UsuarioService {
 
     public function permisos(int $usuarioId){
-        $usuario = User::find($usuarioId);
         
-        if($usuario->email !== "alvaroamav96@gmail.com"){
-            return [];
-        }
-
-        return collect(ValuePermiso::rolesPermisos())
-        ->filter(fn($grupo) => $grupo["administrador"] === true)
-        ->map(fn($grupo) => $grupo["nombre"])
-        ->toArray();
+        return DB::table("roles")
+                ->select([
+                    "permisos.nombre"
+                ])
+                ->join('usuarios', 'usuarios.rol_id', '=', 'roles.id')
+                ->where('usuarios.id', $usuarioId)
+                ->join('roles_permisos', 'roles.id', '=', 'roles_permisos.rol_id')
+                ->join('permisos', 'roles_permisos.permiso_id', '=', 'permisos.id')
+                ->get()
+                ->map(fn($permiso) => $permiso->nombre)
+                ->toArray();
     }
 
     public function findAll(array $parametros){
