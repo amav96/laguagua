@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Parada;
 
 use App\Exceptions\BussinessException;
+use App\Http\Controllers\Controller;
 use App\Http\Services\Parada\ParadaEstadoService;
 use App\Models\ParadaEstado;
 use Illuminate\Http\Request;

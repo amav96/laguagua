@@ -10,10 +10,9 @@ class Rol extends Model
     use HasFactory;
 
     CONST ADMINISTRADOR_SISTEMA = 1;
-    CONST SOCIO_AGENCIA = 2;
-    CONST OPERADOR_AGENCIA = 3;
-    CONST RIDER = 4;
-    CONST VENDEDOR = 5;
+    CONST ADMINISRTADOR_AGENCIA = 2;
+    CONST RIDER = 3;
+    CONST VENDEDOR = 4;
 
     /**
     * Table name.

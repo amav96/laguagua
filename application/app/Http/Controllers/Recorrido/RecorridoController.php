@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Recorrido;
 
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Recorrido\DetectarPropiedadesRequest;
-use App\Http\Requests\Recorrido\GenerarInformeRecorridoRequest;
 use App\Http\Requests\Recorrido\GetRecorridoRequest;
 use App\Http\Requests\Recorrido\InformeRecorridoRequest;
 use App\Http\Requests\Recorrido\OptimizarRecorridoRequest;

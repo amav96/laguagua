@@ -7,16 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class UsuarioEmpresa extends Model
+class InvitacionEmpresa extends Model
 {
-
     use HasFactory, SoftDeletes;
-    
+
+    CONST INVITADO = 1;
+    CONST RECHAZADO = 2;
+    CONST ACEPTADO = 3;
+
      /**
      * Table name.
      * @var string.
      */
-    protected $table = 'usuarios_empresas';
+    protected $table = 'invitaciones_empresas';
 
     /**
      * Table primary key.
@@ -30,16 +33,6 @@ class UsuarioEmpresa extends Model
      */
     public $incrementing = true;
 
-
-    /**
-     * @var array.
-     */
-    protected $guarded = [];
-
-    public function usuario() : HasOne {
-        return $this->hasOne(User::class, 'id', 'usuario_id');
-    }
-
     public function empresa() : HasOne {
         return $this->hasOne(Empresa::class, 'id', 'empresa_id');
     }
@@ -48,8 +41,15 @@ class UsuarioEmpresa extends Model
         return $this->hasOne(Rol::class, 'id', 'rol_id');
     }
 
-    public function invitacion() : HasOne {
-        return $this->hasOne(InvitacionEmpresa::class, 'id', 'invitacion_id');
+    public function invitador() : HasOne {
+        return $this->hasOne(User::class, 'id', 'invitador_id');
     }
-    
+
+    public function estado() : HasOne {
+        return $this->hasOne(InvitacionEstado::class, 'id', 'invitacion_estado_id');
+    }
+
+    public function invitado() : HasOne {
+        return $this->hasOne(User::class, 'email', 'email_invitado');
+    }
 }

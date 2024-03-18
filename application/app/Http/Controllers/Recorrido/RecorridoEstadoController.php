@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Recorrido;
 
+use App\Http\Controllers\Controller;
 use App\Models\RecorridoEstado;
-use Illuminate\Http\Request;
 
 class RecorridoEstadoController extends Controller
 {

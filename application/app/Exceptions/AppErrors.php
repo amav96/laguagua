@@ -43,6 +43,9 @@ class AppErrors
     const EMPRESA_CREATE_CODE = "EMPRESA_CREATE";
     const EMPRESA_CREATE_MESSAGE = "Wrong data to create Empresa";
 
+    const EMPRESA_UPDATE_CODE = "EMPRESA_UPDATE";
+    const EMPRESA_UPDATE_MESSAGE = "Wrong data to UPDATE Empresa";
+
     const SUCURSAL_CREATE_CODE = "SUCURSAL_CREATE";
     const SUCURSAL_CREATE_MESSAGE = "Wrong data to create Sucursal";
 
@@ -54,6 +57,29 @@ class AppErrors
 
     const EMPRESA_USER_NOT_EXISTS_CODE = "EMPRESA_USER_NOT_EXISTS";
     const EMPRESA_USER_NOT_EXISTS_MESSAGE = "User does not belong to company";
+
+    // usuarios empresas / socios
+
+    const USUARIO_EMPRESA_NO_PERMITIDO_CODE = "USUARIO_EMPRESA_NO_PERMITIDO";
+    const USUARIO_EMPRESA_NO_PERMITIDO_MESSAGE = "El usuario logueado no puede obtener esta informacion";
+
+    const USUARIO_EMPRESA_NO_PERTENECE_CODE = "USUARIO_EMPRESA_NO_PERTENECE";
+    const USUARIO_EMPRESA_NO_PERTENECE_MESSAGE = "El usuario logueado no pertenece al parametro enviado";
+
+    // invitaciones
+
+    const INVITACION_DUPLICADA_CODE = "INVITACION_DUPLICADA";
+    const INVITACION_DUPLICADA_MESSAGE = "Este usuario ya posee una invitación";
+
+    const INVITACION_NO_PERTENECE_USUARIO_CODE = "INVITACION_NO_PERTENECE_USUARIO";
+    const INVITACION_NO_PERTENECE_USUARIO_MESSAGE = "La invitacion no pertenece al usuario";
+
+    const INVITACION_ERROR_AL_CREAR_CODE = "INVITACION_ERROR_AL_CREAR";
+    const INVITACION_ERROR_AL_CREAR_MESSAGE = "La invitacion no pertenece al usuario";
+
+    const INVITACION_ERROR_AL_ACEPTAR_CODE = "INVITACION_ERROR_AL_ACEPTAR";
+    const INVITACION_ERROR_AL_ACEPTAR_MESSAGE = "La invitacion no pertenece al usuario";
+    
 
     // recorridos
 

@@ -5,15 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Permiso extends Model
+class InvitacionEstado extends Model
 {
     use HasFactory;
+
+    CONST INVITADO = 1;
+    CONST ACEPTADO = 2;
+    CONST RECHAZADO = 3;
+    CONST TERMINADO = 4;
 
      /**
      * Table name.
      * @var string.
      */
-    protected $table = 'permisos';
+    protected $table = 'invitaciones_estados';
 
     /**
      * Table primary key.
@@ -26,9 +31,4 @@ class Permiso extends Model
      * @var bool.
      */
     public $incrementing = true;
-
-    /**
-     * @var array.
-     */
-    protected $guarded = [];
 }

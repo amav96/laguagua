@@ -18,11 +18,12 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Empresa::insert([
-          "nombre"      => "INDEPENDIENTE",
-          "created_at"  => now(),
-          "updated_at"  => now()  
-        ]);
+        DB::table("empresas")->insert([
+            "nombre"      => "INDEPENDIENTE",
+            "created_at"  => now(),
+            "updated_at"  => now()  
+          ]);
+
     }
 
     /**

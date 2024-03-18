@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Parada;
 
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Parada\SaveParadaComprobanteRequest;
 use App\Http\Services\Parada\ParadaComprobanteService;
 use App\Models\ParadaComprobante;

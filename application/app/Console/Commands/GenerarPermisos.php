@@ -48,7 +48,7 @@ class GenerarPermisos extends Command
                 $permiso->timestamps = false;
                 $permiso->save();
                 
-                if(isset($item["administrador-sistema"])){
+                if($item["administrador-sistema"]){
                     RolPermiso::insert([
                         'rol_id' => Rol::ADMINISTRADOR_SISTEMA,
                         'permiso_id' => $permiso->id,
@@ -56,23 +56,15 @@ class GenerarPermisos extends Command
                     ]);
                 }
 
-                if(isset($item["socio-agencia"])){
+                if($item["administrador-agencia"]){
                     RolPermiso::insert([
-                        'rol_id' => Rol::SOCIO_AGENCIA,
+                        'rol_id' => Rol::ADMINISRTADOR_AGENCIA,
                         'permiso_id' => $permiso->id,
                         'created_at' => now(),
                     ]);
                 }
 
-                if(isset($item["operador-agencia"])){
-                    RolPermiso::insert([
-                        'rol_id' => Rol::OPERADOR_AGENCIA,
-                        'permiso_id' => $permiso->id,
-                        'created_at' => now(),
-                    ]);
-                }
-
-                if(isset($item["rider"])){
+                if($item["rider"]){
                     RolPermiso::insert([
                         'rol_id' => Rol::RIDER,
                         'permiso_id' => $permiso->id,
@@ -80,7 +72,7 @@ class GenerarPermisos extends Command
                     ]);
                 }
 
-                if(isset($item["vendedor"])){
+                if($item["vendedor"]){
                     RolPermiso::insert([
                         'rol_id' => Rol::VENDEDOR,
                         'permiso_id' => $permiso->id,
