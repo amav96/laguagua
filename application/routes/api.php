@@ -1,22 +1,24 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CodigoAreaController;
-use App\Http\Controllers\ItemComprobanteController;
-use App\Http\Controllers\EmpresaController;
-use App\Http\Controllers\ItemEstadoController;
-use App\Http\Controllers\ParadaEstadoController;
-use App\Http\Controllers\RecorridoEstadoController;
-use App\Http\Controllers\ItemController;
-use App\Http\Controllers\ItemTipoController;
+use App\Http\Controllers\Empresa\EmpresaController;
+use App\Http\Controllers\Empresa\InvitacionEmpresaController;
+use App\Http\Controllers\Empresa\UsuarioEmpresaController;
+use App\Http\Controllers\Recorrido\RecorridoEstadoController;
+use App\Http\Controllers\Recorrido\RecorridoController;
+use App\Http\Controllers\Item\ItemController;
+use App\Http\Controllers\Item\ItemTipoController;
+use App\Http\Controllers\Item\ItemComprobanteController;
+use App\Http\Controllers\Item\ItemEstadoController;
 use App\Http\Controllers\PaisController;
-use App\Http\Controllers\ParadaComprobanteController;
-use App\Http\Controllers\ParadaController;
+use App\Http\Controllers\Parada\ParadaComprobanteController;
+use App\Http\Controllers\Parada\ParadaController;
+use App\Http\Controllers\Parada\ParadaEstadoController;
 use App\Http\Controllers\ProveedorItemController;
-use App\Http\Controllers\RecorridoController;
 use App\Http\Controllers\Informes\Item\InformeItemGestionController;
+use App\Http\Controllers\RolController;
 use App\Http\Controllers\TipoDocumentoController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
@@ -124,7 +126,28 @@ Route::middleware(['auth:api'])->group(function () {
     });
 
     // Empresas
-    Route::get('empresas', [EmpresaController::class, 'findAll']);
+    Route::prefix('empresas')->group(function () {
+        Route::get('', [EmpresaController::class, 'findAll']);
+        Route::post('', [EmpresaController::class, 'create']);
+        Route::put('{empresa}', [EmpresaController::class, 'update']);
+        Route::delete('{empresa}', [EmpresaController::class, 'delete']);
+    });
+
+    // invitaciones empresas
+    Route::prefix('invitaciones-empresas')->group(function () {
+        Route::get('', [InvitacionEmpresaController::class, 'findAll']);
+        Route::post('', [InvitacionEmpresaController::class, 'create']);
+        Route::get('/aceptarInvitacion/{invitacionEmpresa}', [InvitacionEmpresaController::class, 'aceptarInvitacion']);
+        Route::get('/rechazarInvitacion/{invitacionEmpresa}', [InvitacionEmpresaController::class, 'rechazarInvitacion']);
+        Route::get('/eliminarInvitacion/{invitacionEmpresa}', [InvitacionEmpresaController::class, 'eliminarInvitacion']);
+    });
+
+    // usuarios empresas
+    Route::prefix('usuarios-empresas')->group(function () {
+        Route::get('', [UsuarioEmpresaController::class, 'findAll']);
+        Route::get('{usuarioEmpresa}/terminar-relacion', [UsuarioEmpresaController::class, 'terminarRelacion']);
+    });
+
     // Proveedores
     Route::get('items-proveedores', [ProveedorItemController::class, 'findAll']);
     // Estados items
@@ -139,9 +162,12 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('tipos-documentos', [TipoDocumentoController::class, 'findAll']);
     // Codigos area
     Route::get('codigos-area', [CodigoAreaController::class, 'findAll']);
+    // Roles
+    Route::get('roles', [RolController::class, 'findAll']);
 
 });
 
-    // Paises
-    Route::get('paises', [PaisController::class, 'findAll']);
+// Paises
+Route::get('paises', [PaisController::class, 'findAll']);
+
 

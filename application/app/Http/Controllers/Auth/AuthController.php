@@ -36,8 +36,7 @@ class AuthController extends Controller
         try {
 
             list($usuario, $token) = $this->authService->login($request->all());
-            $permisos = $this->usuarioService->permisos($usuario->id);
-            $usuario->permisos = $usuario->email === 'alvaroamav96@gmail.com' ? $permisos : [];
+            $usuario->permisos = $this->usuarioService->permisos($usuario->id);
             
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(), 400);
@@ -60,6 +59,7 @@ class AuthController extends Controller
             }
 
             list($usuario, $token) = $this->authService->googleAuthLogin(["email" => $verificacion["email"]]);
+            $usuario->permisos = $this->usuarioService->permisos($usuario->id);
 
             return response()->json([
                 'usuario'   => $usuario,
@@ -87,6 +87,7 @@ class AuthController extends Controller
             }
 
             list($usuario, $token) = $this->authService->googleAuthRegistrar (["email" => $verificacion["email"]]);
+            $usuario->permisos = $this->usuarioService->permisos($usuario->id);
 
             return response()->json([
                 'usuario'   => $usuario,
@@ -105,6 +106,7 @@ class AuthController extends Controller
         try {
             
             list($usuario, $token) = $this->authService->registrar($request->all());
+            $usuario->permisos = $this->usuarioService->permisos($usuario->id);
 
         } catch (BussinessException $e) {
             return response()->json($e->getAppResponse(), 400);

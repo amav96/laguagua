@@ -11,7 +11,17 @@ use Illuminate\Support\Facades\Log;
 class EmailService
 {
 
-    public function sendEmail(string $host, string $sender, string $password, string $senderDomain, string $senderDomainName, string $to, string $subject, $view, $attachmentPath = null): bool
+    public function sendEmail(
+        string $host, 
+        string $sender, 
+        string $password, 
+        string $senderDomain, 
+        string $senderDomainName, 
+        string $to, 
+        string $subject, 
+        $view, 
+        $attachmentPath = null
+        ): bool
     {
         $sent = false;
         

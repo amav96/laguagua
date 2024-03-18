@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Empresa extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     const INDEPENDIENTE = 1;
 
@@ -33,4 +35,9 @@ class Empresa extends Model
      * @var array.
      */
     protected $guarded = [];
+
+    public function usuarios(): HasMany
+    {
+        return $this->hasMany(UsuarioEmpresa::class, "usuario_id", "id");
+    }
 }

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Item;
 
 use App\Config\Seguridad\ValuePermiso;
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Item\FindAllItemRequest;
 use App\Http\Requests\Item\SaveItemRequest;
 use App\Http\Services\Item\ItemService;

@@ -11,17 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('usuarios_empresas', function (Blueprint $table) {
-            $table->id();
-            
-            $table->unsignedBigInteger('usuario_id')->nullable();
+        Schema::table('empresas', function (Blueprint $table) {
+            $table->unsignedBigInteger('usuario_id')->after('nombre')->nullable();
             $table->foreign('usuario_id')->references('id')->on('usuarios');
-
-            $table->unsignedBigInteger('empresa_id')->nullable();
-            $table->foreign('empresa_id')->references('id')->on('empresas');
-
             $table->softDeletes();
-            $table->timestamps();
         });
     }
 
@@ -30,11 +23,16 @@ return new class extends Migration
      */
     public function down(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-        Schema::table('usuarios_empresas', function (Blueprint $table) {
+        Schema::table('empresas', function (Blueprint $table) {
             $table->dropForeign(['usuario_id']);
-            $table->dropForeign(['empresa_id']);
         });
-        Schema::dropIfExists('usuarios_empresas');
+
+        Schema::table('empresas', function (Blueprint $table) {
+            $table->dropColumn('usuario_id');
+        });
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 };

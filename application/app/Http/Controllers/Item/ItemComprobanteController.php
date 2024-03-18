@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Item;
 
 use App\Exceptions\BussinessException;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Item\SaveItemComprobanteRequest;
 use App\Http\Services\Item\ItemComprobanteService;
 use App\Models\ItemComprobante;

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Item;
+namespace App\Http\Requests\InvitacionEmpresa;
 
 use App\Traits\RequestValidationHandler;
 use Illuminate\Foundation\Http\FormRequest;
 
-class FindAllItemRequest extends FormRequest
+class SaveInvitacionRequest extends FormRequest
 {
     use RequestValidationHandler;
     /**
@@ -24,11 +24,10 @@ class FindAllItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-           'rider_id'     => "nullable|integer|exists:usuarios,id",
-           "item_id"        => "nullable|integer|exists:items,id",
-           "empresa_id"     => "nullable|integer",
-           "busqueda"       => "nullable|string|max:100",
-           "track_id"       => "nullable|string|max:100"
+            "email_invitado" => "required|string|email",
+            "invitador_id"   => "required|integer|exists:usuarios,id",
+            "rol_id"         => "required|integer|exists:roles,id",
+            "empresa_id"     => "required|integer|exists:empresas,id"
         ];
     }
 }
