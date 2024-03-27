@@ -84,6 +84,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('', [ParadaController::class, 'create']);
         Route::put('/{parada}', [ParadaController::class, 'update']);
         Route::patch('/estado/{parada}', [ParadaController::class, 'updateEstado']);
+        Route::patch('/hora-llegada-estimada/{parada}', [ParadaController::class, 'updateHoraLlegadaEstimada']);
+       
         Route::delete('/{parada}', [ParadaController::class, 'delete']);
     });
 
@@ -96,6 +98,7 @@ Route::middleware(['auth:api'])->group(function () {
     // Items
     Route::prefix('items')->group(function () {
         Route::get('/{item_id?}', [ItemController::class, 'findAll']);
+        Route::get('/ultimo/item', [ItemController::class, 'getUltimoItem']);
         Route::post('', [ItemController::class, 'create']);
         Route::put('{item}', [ItemController::class, 'update']);
         Route::patch('/estado/{item}', [ItemController::class, 'updateEstado']);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -45,6 +46,11 @@ class Parada extends Model
     {
         return $this->hasMany(Item::class, "parada_id", "id");
     }
+
+    // public function getHoraLlegadaEstimadaAttribute($value)
+    // {
+    //     return Carbon::parse($value)->format('Y-m-d H:i:s');
+    // }
 
     public function comprobantes() : HasMany {
         return $this->hasMany(ParadaComprobante::class, 'parada_id', 'id');

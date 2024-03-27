@@ -33,7 +33,7 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
-        
+      
         if ($request->expectsJson()){
            
             if ($e instanceof ModelNotFoundException){

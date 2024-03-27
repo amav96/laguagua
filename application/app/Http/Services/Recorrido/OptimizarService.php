@@ -6,6 +6,7 @@ use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Http\Services\ConsumoService;
 use App\Http\Services\FlexiblePolyline\FlexiblePolyline;
+use App\Models\Parada;
 use App\Models\Recorrido;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -21,6 +22,7 @@ class OptimizarService {
     protected float $destinoLat;
     protected float $destinoLng;
     protected int $usuarioId;
+    protected string $timeZone;
 
     public function setParadas(Collection $paradas){
         $this->paradas = $paradas;
@@ -46,6 +48,10 @@ class OptimizarService {
         $this->usuarioId = $usuarioId;
     }
 
+    public function setTimeZone(string $timeZone){
+        $this->timeZone = $timeZone;
+    }
+
     public function optimizar(){
         
         try {
@@ -59,7 +65,7 @@ class OptimizarService {
             })->values()->sortByDesc('realizado_en');
            
             if($paradasOptimizar->count() <= 25){
-                list($paradasOptimizadas, $distancia, $duracion, $polyline) = $this->GOOGLEOptimizador($paradasOptimizar, $paradasRestantes);
+                list($paradasOptimizadas, $distancia, $duracion, $polyline) = $this->HEREOptimizador($paradasOptimizar, $paradasRestantes);
             } else {
                 list($paradasOptimizadas, $distancia, $duracion, $polyline) = $this->HEREOptimizador($paradasOptimizar, $paradasRestantes);
             }
@@ -88,20 +94,20 @@ class OptimizarService {
             $url = 'https://wps.hereapi.com/v8/findsequence2';
         
             // Construir los datos de la solicitud
-            
+           
             $data = [
                 'start' => $this->origenLat.','.$this->origenLng,
                 'end' => $this->destinoLat.','.$this->destinoLng,
                 'mode' => 'car',
                 'improveFor'    => 'distance',
-                'departure' => Carbon::now()->toIso8601String(),
-            
+                'departure' => Carbon::now()->setTimezone($this->timeZone)->addMinutes(5)->toIso8601String(),
             ];
+            
 
             foreach ($paradas as $key => $parada) {
-                $data["destination".$key + 1] = $parada->id.';'.$parada->lat.','.$parada->lng;
+                $data["destination".$key + 1] = $parada->id.';'.$parada->lat.','.$parada->lng.';st:420';
             }
-
+            
             $response = $client->get($url.'?&'.http_build_query($data).'&apiKey='.$apiKey);
 
             $result = json_decode($response->getBody(), true);
@@ -112,7 +118,7 @@ class OptimizarService {
             if(isset($result["results"][0])){
                 $ultimoNumeroParadaOrden = 0;
                 $ordenParadas = $result["results"][0]["waypoints"];
-            
+               
                 foreach($ordenParadas as $posicionParada => $parada ){
                     if($parada["id"] !== "start" && $parada["id"] !== "end"){
                         $indexParada = $paradas->search((function($p) use($parada){
@@ -120,6 +126,8 @@ class OptimizarService {
                         }));
                         if(gettype($indexParada) === 'integer'){
                             $paradas[$indexParada]->orden = $parada["sequence"];
+                            $paradas[$indexParada]->hora_llegada_estimada = Carbon::parse($parada["estimatedDeparture"])->format('Y-m-d H:i:s');
+                            
                             $paradas[$indexParada]->save();
                             $ultimoNumeroParadaOrden = $parada["sequence"];
                         }

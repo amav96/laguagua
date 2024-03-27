@@ -23,6 +23,7 @@ use App\Models\CodigoArea;
 use App\Models\ItemEstado;
 use App\Models\ItemProveedor;
 use App\Models\ItemTipo;
+use App\Models\Pais;
 use App\Models\Recorrido;
 use App\Models\TipoDocumento;
 use App\Models\User;
@@ -214,11 +215,13 @@ class RecorridoController extends Controller
     }
 
     public function optimizar(OptimizarRecorridoRequest $request){
-        
+       
        try {
 
             $data = $request->all();
-
+            $usuario = $request->user();
+            $pais = Pais::find($usuario->pais_id);
+           
             $recorrido = Recorrido::with('paradas.paradaEstado')->findOrFail($request["recorrido_id"]);
 
             $optimizador = new OptimizarService();
@@ -228,6 +231,7 @@ class RecorridoController extends Controller
             $optimizador->setOrigenLng($recorrido->origen_actual_lng);
             $optimizador->setDestinoLng($recorrido->destino_lng);
             $optimizador->setDestinoLat($recorrido->destino_lat);
+            $optimizador->setTimeZone($pais->time_zone);
             
             [$paradas, $distancia, $duracion, $polyline ] = $optimizador->optimizar();
         

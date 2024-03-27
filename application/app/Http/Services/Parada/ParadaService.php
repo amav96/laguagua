@@ -25,7 +25,7 @@ class ParadaService {
                 ->when(isset($parametros["rider_id"]), function (Builder $q) use($parametros) : void {
                     $q->where('rider_id', $parametros["rider_id"]); 
                 });
-                
+               
         return $this->transform(isset($parametros["page"]) ?  $query->paginate() : $query->get(), $parametros["time_zone"]);
     }
 
@@ -72,6 +72,7 @@ class ParadaService {
             $parada->rider_id               = $request["rider_id"];
             $parada->parada_estado_id       = ParadaEstado::PREPARADO;
             $parada->tipo_domicilio         = $request["tipo_domicilio"] ?? null;
+            $parada->hora_llegada_estimada  = isset($request["hora_llegada_estimada"]) ? $request["hora_llegada_estimada"] : null;
 
             $parada->save();
             $parada->load([
@@ -135,6 +136,14 @@ class ParadaService {
         $parada->load([
             "paradaEstado"
         ]);
+
+        return $parada;
+    }
+
+    public function updateHoraLlegadaEstimada(array $request, Parada $parada){
+
+        $parada->hora_llegada_estimada   = $request["hora_llegada_estimada"];
+        $parada->save();
 
         return $parada;
     }

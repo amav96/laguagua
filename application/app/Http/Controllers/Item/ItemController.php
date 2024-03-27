@@ -47,6 +47,18 @@ class ItemController extends Controller
         return response()->json($paradas);
     }
 
+    public function getUltimoItem (Request $request) {
+       
+        if(!$request->usuario_id){
+            return [];
+        }
+
+        $ultimoItem = Item::where("rider_id", $request->usuario_id)->orderBy('id', 'DESC')->first();
+
+        return response()->json($ultimoItem);
+       
+    }
+
     public function create(SaveItemRequest $request){
 
         $this->validarParada();

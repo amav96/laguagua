@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Parada;
 use App\Exceptions\AppErrors;
 use App\Exceptions\BussinessException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Parada\LlegadaParadaRequest;
 use App\Http\Requests\Parada\SaveParadaRequest;
 use App\Http\Services\Parada\ParadaService;
 use App\Models\Parada;
@@ -94,6 +95,21 @@ class ParadaController extends Controller
         ]);
     }
 
+    public function updateHoraLlegadaEstimada(Parada $parada, LlegadaParadaRequest $request){
+        try {
+
+            $actualizarParada = $this->paradaService->updateHoraLlegadaEstimada($request->validated(), $parada);
+
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(), $e->getInternalCode() === AppErrors::PARADA_NO_PERTECE_USUARIO_CODE ? 404 : 400);
+        }
+
+        return response()->json([
+            "parada" => $actualizarParada
+        ]);
+    }
+
+    
     public function delete(Parada $parada, Request $request){
 
         try {

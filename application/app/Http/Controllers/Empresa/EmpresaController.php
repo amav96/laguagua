@@ -22,8 +22,16 @@ class EmpresaController extends Controller
     public function findAll(Request $request){
         
         $usuario = $request->user();
-        $usuarioEmpresas = UsuarioEmpresa::where('usuario_id', $usuario->id)->whereIn("rol_id",[Rol::ADMINISRTADOR_AGENCIA] )->get();
-        $empresas = Empresa::with("usuarios.usuario")->whereIn('id', $usuarioEmpresas->pluck("empresa_id"))->get();
+        $data = $request->all();
+        $usuarioEmpresas = UsuarioEmpresa::where('usuario_id', $usuario->id)->get();
+        $data["empresa_id"] = array_merge($usuarioEmpresas->pluck("empresa_id")->toArray(), [Empresa::INDEPENDIENTE]);
+
+
+        try {
+            $empresas =   $this->empresaService->findAll($data);
+        } catch (BussinessException $e) {
+            return response()->json($e->getAppResponse(),  400);
+        }  
 
         return response()->json($empresas);
     }

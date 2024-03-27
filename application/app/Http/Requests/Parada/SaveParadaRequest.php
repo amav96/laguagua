@@ -87,7 +87,8 @@ class SaveParadaRequest extends FormRequest
                     }
                 }
             ],
-            "tipo_domicilio" => ["nullable", "string"]
+            "tipo_domicilio" => ["nullable", "string"],
+            "hora_llegada_estimada" => ["nullable", "string"],
         ];
 
         $this->agregarValidacionRecorrido($rules);

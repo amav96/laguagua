@@ -36,8 +36,8 @@ class Empresa extends Model
      */
     protected $guarded = [];
 
-    public function usuarios(): HasMany
+    public function usuariosEmpresas(): HasMany
     {
-        return $this->hasMany(UsuarioEmpresa::class, "usuario_id", "id");
+        return $this->hasMany(UsuarioEmpresa::class, "empresa_id", "id");
     }
 }
